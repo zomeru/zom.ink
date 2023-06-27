@@ -2,7 +2,7 @@
   "name": "zomink",
   "private": true,
   "engines": {
-    "node": ">=v18.16.0"
+    "node": ">=v18.15.0"
   },
   "author": "zomeru",
   "license": "MIT",
