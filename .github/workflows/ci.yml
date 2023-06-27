@@ -24,25 +24,27 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup yarn
-        uses: yarn/action-setup@v2.2.4
+        uses: yarnpkg/setup-yarn@v2
+        with:
+          yarn-version: ">= 1.22"
 
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Get yarn store directory
+      - name: Get Yarn cache directory
         id: yarn-cache
         run: |
-          echo "yarn_cache_dir=$(yarn store path)" >> $GITHUB_OUTPUT
+          echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
 
       - name: Setup yarn cache
         uses: actions/cache@v3
         with:
           path: ${{ steps.yarn-cache.outputs.yarn_cache_dir }}
-          key: ${{ runner.os }}-yarn-store-${{ hashFiles('**/yarn-lock.yaml') }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-store-
+            ${{ runner.os }}-yarn-cache-
 
       - name: Install deps (with cache)
         run: yarn install
