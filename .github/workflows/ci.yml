@@ -16,43 +16,48 @@ env:
 jobs:
   build-lint:
     env:
-      DATABASE_URL: file:./db.sqlite
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.16.1]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup yarn
-        uses: yarn/action-setup@v2.2.4
+        run: npm install -g yarn
 
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Get yarn store directory
+      - name: Get Yarn cache directory
         id: yarn-cache
         run: |
-          echo "yarn_cache_dir=$(yarn store path)" >> $GITHUB_OUTPUT
+          echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
 
       - name: Setup yarn cache
-        uses: actions/cache@v3
+        uses: c-hive/gha-yarn-cache@v2
         with:
-          path: ${{ steps.yarn-cache.outputs.yarn_cache_dir }}
-          key: ${{ runner.os }}-yarn-store-${{ hashFiles('**/yarn-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-store-
+          node-version: 18.16.1
 
       - name: Install deps (with cache)
         run: yarn install
 
       # TODO: Free for all to find a better solution here.
+      - name: Build database
+        run: yarn turbo build --filter=db
+
       - name: Generate Prisma Client
         run: yarn turbo db:generate
 
       - name: Build, lint and type-check
-        run: yarn turbo build lint type-check
+        run: yarn turbo build --filter=!db lint type-check
 
       - name: Check workspaces
         run: yarn manypkg check
