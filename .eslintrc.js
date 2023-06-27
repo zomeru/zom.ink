@@ -12,6 +12,14 @@ const config = {
       "./packages/*/tsconfig.json",
     ],
   },
+  ignorePatterns: [
+    "tsup.config.ts",
+    "dist",
+    "build",
+    ".next",
+    ".turbo",
+    "node_modules",
+  ],
   settings: {
     next: {
       rootDir: ["apps/web"],
