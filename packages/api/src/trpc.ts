@@ -8,11 +8,10 @@
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { getServerSession, type Session } from "@zomink/auth";
+import { prisma } from "@zomink/db";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
-import { getServerSession, type Session } from "@acme/auth";
-import { prisma } from "@acme/db";
 
 /**
  * 1. CONTEXT

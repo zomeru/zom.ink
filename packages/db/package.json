@@ -1,14 +1,17 @@
 {
-  "name": "@acme/db",
+  "name": "@zomink/db",
   "version": "0.1.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
+    "build": "tsup",
+    "dev": "yarn with-env tsup --watch",
     "clean": "rm -rf .turbo node_modules",
-    "db:generate": "pnpm with-env prisma generate",
-    "db:push": "pnpm with-env prisma db push --skip-generate",
-    "dev": "pnpm with-env prisma studio --port 5556",
+    "db:generate": "yarn with-env prisma generate",
+    "db:push": "yarn with-env prisma db push --skip-generate",
+    "db:studio": "yarn with-env prisma studio --port 5556",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
@@ -17,6 +20,7 @@
   "devDependencies": {
     "dotenv-cli": "^7.2.1",
     "prisma": "^4.15.0",
+    "tsup": "^7.1.0",
     "typescript": "^5.1.3"
   }
 }

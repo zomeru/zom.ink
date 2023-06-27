@@ -5,8 +5,8 @@
       "name": "Next.js",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm dev",
-      "cwd": "${workspaceFolder}/apps/nextjs/",
+      "command": "yarn dev",
+      "cwd": "${workspaceFolder}/apps/web/",
       "skipFiles": ["<node_internals>/**"]
     }
   ]

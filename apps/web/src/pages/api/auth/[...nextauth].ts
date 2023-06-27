@@ -1,5 +1,4 @@
+import { authOptions } from "@zomink/auth";
 import NextAuth from "next-auth";
-
-import { authOptions } from "@acme/auth";
 
 export default NextAuth(authOptions);

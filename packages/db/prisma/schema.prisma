@@ -4,11 +4,14 @@
 generator client {
     provider = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
+    output = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+    directUrl = env("DATABASE_DIRECT_URL")
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Post {
