@@ -29,6 +29,7 @@
     },
     "lint": {},
     "lint:fix": {},
+    "prepare": {},
     "clean": {
       "cache": false
     },
