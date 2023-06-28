@@ -20,10 +20,16 @@
     },
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".next/**", ".expo/**"]
+      "outputs": [".next/**"]
+    },
+    "start": {
+      "dependsOn": ["^build", "^db:generate"],
+      "persistent": true,
+      "cache": false
     },
     "lint": {},
     "lint:fix": {},
+    "prepare": {},
     "clean": {
       "cache": false
     },
@@ -38,6 +44,8 @@
   "globalEnv": [
     "CI",
     "DATABASE_URL",
+    "DATABASE_DIRECT_URL",
+    "SHADOW_DATABASE_URL",
     "DISCORD_CLIENT_ID",
     "DISCORD_CLIENT_SECRET",
     "EXPO_ROUTER_APP_ROOT",
@@ -46,6 +54,7 @@
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
     "VERCEL",
-    "VERCEL_URL"
+    "VERCEL_URL",
+    "NEXT_PUBLIC_URL"
   ]
 }

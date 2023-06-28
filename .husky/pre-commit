@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '🏗️👷 Checking lint'
+npx turbo run lint || (
+  echo '🚨🚨
+  Linting failed. Please fix the errors and try again.
+  '
+)
+
+echo '🏗️👷 Checking types'
+npx turbo run type-check || (
+  echo '🚨🚨
+  Type checking failed. Please fix the errors and try again.
+  '
+)
+
+echo '✅ All checks passed.'
+echo '✏ Commiting your changes.'

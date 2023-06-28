@@ -1,7 +1,8 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@zomink/db";
 import { type DefaultSession, type NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+
+import { prisma } from "@zomink/db";
 
 import { env } from "../env.mjs";
 
@@ -57,4 +58,8 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      **/
   ],
+  pages: {
+    signIn: "/auth/signin",
+    newUser: "/dashboard",
+  },
 };

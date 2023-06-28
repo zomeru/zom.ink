@@ -1,10 +1,20 @@
 import "../styles/globals.css";
+import "nprogress/nprogress.css";
 
 import type { AppType } from "next/app";
+import { Router } from "next/router";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import nprogress from "nprogress";
 
 import { api } from "~/utils/api";
+
+Router.events.on("routeChangeStart", () => {
+  nprogress.configure({ showSpinner: false });
+  nprogress.start();
+});
+Router.events.on("routeChangeComplete", () => nprogress.done());
+Router.events.on("routeChangeError", () => nprogress.done());
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

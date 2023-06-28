@@ -8,10 +8,11 @@
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { getServerSession, type Session } from "@zomink/auth";
-import { prisma } from "@zomink/db";
 import superjson from "superjson";
 import { ZodError } from "zod";
+
+import { getServerSession, type Session } from "@zomink/auth";
+import { prisma } from "@zomink/db";
 
 /**
  * 1. CONTEXT
@@ -67,8 +68,14 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
+    const errorMessage = error.message.includes("[")
+      ? /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+        (JSON.parse(error.message)[0] as { message: string }).message
+      : error.message;
+
     return {
       ...shape,
+      message: errorMessage,
       data: {
         ...shape.data,
         zodError:

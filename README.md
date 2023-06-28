@@ -1,6 +1,6 @@
 # zom.ink
 
-Turborepo: Next, Express, NextAuth, Prisma, GraphQL, TypeScript, Tailwind CSS
+Zom.ink - Free Link Management Platform
 
 ## 🛠 Set Up
 
@@ -13,7 +13,7 @@ yarn install
 2. Copy and modify `.env`
 
 ```bash
-cp .envrc.example .envrc
+cp .env.example .env
 ```
 
 3. Start the development server
