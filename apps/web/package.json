@@ -22,6 +22,7 @@
     "@zomink/api": "^0.1.0",
     "@zomink/auth": "^0.1.0",
     "@zomink/db": "^0.1.0",
+    "@zomink/utilities": "^0.1.0",
     "next": "^13.4.4",
     "next-auth": "^4.22.1",
     "react": "18.2.0",

@@ -41,6 +41,7 @@
     "packages/api",
     "packages/auth",
     "packages/db",
+    "packages/utilities",
     "packages/config/*"
   ]
 }

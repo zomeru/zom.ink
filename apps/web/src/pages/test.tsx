@@ -28,16 +28,17 @@ function PostCard(props: {
 }
 
 function CreatePostForm() {
-  const utils = api.useContext();
+  const ctx = api.useContext();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const { mutate, error } = api.post.create.useMutation({
-    async onSuccess() {
+    async onSuccess(data) {
+      console.log("data post", data);
       setTitle("");
       setContent("");
-      await utils.post.all.invalidate();
+      await ctx.post.all.invalidate();
     },
   });
 

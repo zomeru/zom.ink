@@ -2,15 +2,15 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
-    output = "../../../node_modules/.prisma/client"
+    output          = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-    directUrl = env("DATABASE_DIRECT_URL")
+    provider          = "postgresql"
+    url               = env("DATABASE_URL")
+    directUrl         = env("DATABASE_DIRECT_URL")
     shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -30,12 +30,12 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String? @db.Text
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -58,6 +58,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    urls          Url[]
 }
 
 model VerificationToken {
@@ -66,4 +67,32 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Url {
+    id         String   @id @default(cuid())
+    url        String   @db.Text
+    slug       String   @unique
+    clickCount Int      @default(0)
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    userId     String?
+    user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    clicks     Click[]
+
+    @@index([userId])
+    @@index([slug])
+}
+
+model Click {
+    id        String   @id @default(cuid())
+    url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
+    urlId     String
+    browser   String
+    os        String
+    country   String
+    region    String
+    city      String
+    referrer  String?
+    createdAt DateTime @default(now())
 }
