@@ -15,13 +15,5 @@ npx turbo run type-check || (
   '
 )
 
-echo '🏗️👷 Formatting files'
-npm run format || (
-  echo '🚨🚨
-  Formatting failed. Please fix the errors and try again.
-  '
-)
-
-
 echo '✅ All checks passed.'
 echo '✏ Commiting your changes.'
