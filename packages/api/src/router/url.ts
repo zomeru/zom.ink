@@ -16,10 +16,13 @@ import {
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { findUrlAndIsOwner } from "../utils";
 
-const getUrlBySlug = z
-  .string()
-  .min(5, INVALID_URL_ENTERED_ERROR_MESSAGE)
-  .refine(isValidSlug, INVALID_URL_ENTERED_ERROR_MESSAGE);
+const getUrlBySlug = z.object({
+  slug: z
+    .string()
+    .min(5, INVALID_URL_ENTERED_ERROR_MESSAGE)
+    .refine(isValidSlug, INVALID_URL_ENTERED_ERROR_MESSAGE),
+  userAgent: z.string().optional(),
+});
 
 const createUrl = z.object({
   slug: z
@@ -58,13 +61,14 @@ export const urlRouter = createTRPCRouter({
     return urls;
   }),
   bySlug: publicProcedure.input(getUrlBySlug).query(async ({ ctx, input }) => {
-    const userAgent = ctx.req.headers["user-agent"];
+    const { slug, userAgent } = input;
 
-    console.log("userAgent: ", userAgent);
+    // TODO: Add click tracking
+    console.log("userAgent", decodeURIComponent(userAgent ?? ""));
 
-    const slug = await ctx.prisma.url.findUnique({ where: { slug: input } });
+    const url = await ctx.prisma.url.findUnique({ where: { slug } });
 
-    if (!slug) {
+    if (!url) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: INVALID_URL_ENTERED_ERROR_MESSAGE,
@@ -73,11 +77,11 @@ export const urlRouter = createTRPCRouter({
 
     // Increment click count by 1
     await ctx.prisma.url.update({
-      where: { slug: input },
+      where: { slug },
       data: { clickCount: { increment: 1 } },
     });
 
-    return slug;
+    return url;
   }),
   create: publicProcedure.input(createUrl).mutation(async ({ ctx, input }) => {
     const { slug, url, userId } = input;

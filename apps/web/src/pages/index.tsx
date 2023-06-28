@@ -4,11 +4,11 @@ import { api } from "~/utils/api";
 import { Layout } from "~/components";
 
 const Home = () => {
-  const utils = api.useContext();
+  const ctx = api.useContext();
   const url = api.url.create.useMutation({
     async onSuccess(data) {
       console.log("data url", data);
-      // await utils.url.all.invalidate();
+      await ctx.url.all.invalidate();
     },
     onError(err) {
       console.log("ON ERROR", err.message);

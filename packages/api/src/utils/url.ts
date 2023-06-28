@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+
 import { TRPCError } from "@trpc/server";
 
-import { prisma as _prisma } from "@zomink/db";
+import { prisma } from "@zomink/db";
 
 import {
   INVALID_URL_ID_ERROR_MESSAGE,
@@ -20,9 +22,9 @@ import {
 export const findUrlAndIsOwner = async (
   urlId: string,
   userId: string,
-  prisma: typeof _prisma,
+  _prisma: typeof prisma,
 ): Promise<void> => {
-  const url = await prisma.url.findUnique({ where: { id: urlId } });
+  const url = await _prisma.url.findUnique({ where: { id: urlId } });
 
   if (!url) {
     throw new TRPCError({
