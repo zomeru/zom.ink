@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Formik } from "formik";
+import { Formik, type FormikProps } from "formik";
 import { useSession } from "next-auth/react";
 import nProgress from "nprogress";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -11,16 +11,17 @@ import { api } from "~/utils/api";
 import { TextError } from "~/components/TextError";
 import { APP_NAME, LOCAL_USER_ID } from "~/constants";
 import { useError } from "~/hooks";
-import { createShortURLSchema } from "~/schema";
+import { createShortURLSchema, type CreateShortURLSchemaType } from "~/schema";
 import { ShortenedURLs } from "./ShortenedURLs";
 
 export const ShortenField = () => {
   const { data: session } = useSession();
+  const ctx = api.useContext();
+
+  const formikRef = useRef<FormikProps<CreateShortURLSchemaType>>(null);
 
   const [shortenError, setShortenError] = useError();
-  const [shortening, setShortening] = useState(false);
   const [localId, setLocalId] = useState("");
-  const [mutateSuccess, setMutateSuccess] = useState(false);
 
   useEffect(() => {
     const local = localStorage.getItem(LOCAL_USER_ID) ?? slugGenerator(10);
@@ -33,8 +34,9 @@ export const ShortenField = () => {
   const localUrls = api.url.getAllByLocalId.useQuery(localId);
 
   const { mutate } = api.url.create.useMutation({
-    onSuccess: () => {
-      setMutateSuccess(true);
+    onSuccess: async () => {
+      await ctx.url.all.invalidate();
+      await ctx.url.getAllByLocalId.invalidate();
 
       if (session?.user) {
         userUrls.refetch();
@@ -44,7 +46,8 @@ export const ShortenField = () => {
     },
     onSettled: () => {
       nProgress.done();
-      setShortening(false);
+      formikRef.current?.setSubmitting(false);
+      formikRef.current?.resetForm();
     },
     onError: (err) => {
       setShortenError(err.message);
@@ -52,7 +55,6 @@ export const ShortenField = () => {
   });
 
   const onShorten = (values: { url: string; slug?: string }) => {
-    setShortening(true);
     setShortenError("");
     nProgress.configure({ showSpinner: true });
     nProgress.start();
@@ -84,17 +86,12 @@ export const ShortenField = () => {
       className="padding-sides bg-primary-500 my-[20px] w-full py-[35px] 2xl:my-[50px]"
     >
       <Formik
+        innerRef={formikRef}
         initialValues={{ url: "", slug: "", userId: "", localId: "" }}
         validationSchema={toFormikValidationSchema(createShortURLSchema)}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(true);
           onShorten(values);
-
-          setSubmitting(false);
-
-          if (mutateSuccess) {
-            resetForm();
-            setMutateSuccess(false);
-          }
         }}
       >
         {({
@@ -131,7 +128,7 @@ export const ShortenField = () => {
                 type="text"
                 name="slug"
                 className={`h-[45px] w-full rounded-lg px-5 text-sm outline-none sm:h-auto sm:w-[180px] sm:text-base md:w-[250px] ${
-                  errors.slug && values.slug.length > 0
+                  errors.slug && !!values.slug && values.slug.length > 0
                     ? "input-error text-red-600"
                     : "text-sky-600"
                 }`}
@@ -142,14 +139,12 @@ export const ShortenField = () => {
               />
               <button
                 disabled={
-                  shortening ||
                   isSubmitting ||
                   (!!errors.url && errors.url !== "Link is required") ||
                   !!errors.slug
                 }
                 type="submit"
                 className={`btn-primary-lg ${
-                  shortening ||
                   isSubmitting ||
                   (!!errors.url && errors.url !== "Link is required") ||
                   errors.slug
@@ -184,7 +179,10 @@ export const ShortenField = () => {
             </p>
             <TextError
               showError={
-                !shortenError && !!errors.slug && values.slug.length > 0
+                !shortenError &&
+                !!errors.slug &&
+                !!values.slug &&
+                values.slug.length > 0
               }
               errorText={errors.slug!}
               className={`mb-[20px] ${hasUrls ? "h-[25px]" : ""}`}

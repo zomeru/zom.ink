@@ -66,7 +66,7 @@ export const urlRouter = createTRPCRouter({
     .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       const urls = await ctx.prisma.url.findMany({
-        where: { userId: input },
+        where: { localId: input },
         orderBy: { id: "desc" },
       });
 
@@ -96,7 +96,7 @@ export const urlRouter = createTRPCRouter({
     return url;
   }),
   create: publicProcedure.input(createUrl).mutation(async ({ ctx, input }) => {
-    const { slug, url, userId } = input;
+    const { slug, url, userId, localId } = input;
 
     const _slug = slug === "" || slug === undefined ? slugGenerator() : slug;
 
@@ -105,6 +105,7 @@ export const urlRouter = createTRPCRouter({
         slug: _slug,
         url: fixUrl(url),
         userId,
+        localId,
       },
     });
 

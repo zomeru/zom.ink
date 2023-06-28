@@ -27,7 +27,7 @@ export const fixUrl = (url: string): string => {
 
   const newUrl = hasProtocol ? fixedUrl : `http://${fixedUrl}`;
 
-  return newUrl;
+  return newUrl.trim();
 };
 
 /**
@@ -67,7 +67,11 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
   const isDomainCheck = checkDomain ? !BLOCKED_DOMAINS.includes(urlHost) : true;
 
   // Check if url is valid, not the same as the our own url, and not in the blocked domains list
-  const isUrlValid = regEx.test(urlHost) && myHost !== urlHost && isDomainCheck;
+  const isUrlValid =
+    regEx.test(url.trim()) &&
+    !url.trim().includes(" ") &&
+    myHost !== urlHost &&
+    isDomainCheck;
 
   return isUrlValid;
 };

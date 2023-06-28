@@ -58,9 +58,9 @@ const UrlComponent = ({
   );
 };
 
-type Url = RouterOutputs["url"]["getAllByLocalId" | "all"];
+export type UrlType = RouterOutputs["url"]["getAllByLocalId" | "all"];
 
-export const ShortenedURLs = ({ urls }: { urls?: Url }) => {
+export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
   const [urlCopied, setUrlCopied] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export const ShortenedURLs = ({ urls }: { urls?: Url }) => {
   const copyToClipBoard = async (url: string, id: string) => {
     try {
       setUrlCopied(undefined);
-      await navigator.clipboard.writeText(url).catch((err) => console.log(err));
+      await navigator.clipboard.writeText(url);
 
       setUrlCopied(id);
     } catch (err) {

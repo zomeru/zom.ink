@@ -19,3 +19,5 @@ export const createShortURLSchema = object({
     .or(z.literal("")),
   localId: z.string().optional(),
 });
+
+export type CreateShortURLSchemaType = z.infer<typeof createShortURLSchema>;
