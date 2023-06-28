@@ -9,11 +9,12 @@ import { INVALID_URL_ENTERED_ERROR_MESSAGE } from "@zomink/api/src/error";
 import { type Prisma } from "@zomink/db";
 
 import { ssrApi } from "~/utils/api";
+import NotFound from "./404";
 
 type SlugProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const Slug: NextPage<SlugProps> = ({ data }) => {
-  return <div>{data.error?.message ?? "Default error"}</div>;
+  return <NotFound message={data.error?.message} />;
 };
 
 export default Slug;

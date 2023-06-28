@@ -77,11 +77,13 @@ model Url {
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
     userId     String?
+    localId    String?
     user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     clicks     Click[]
 
     @@index([userId])
     @@index([slug])
+    @@index([localId])
 }
 
 model Click {

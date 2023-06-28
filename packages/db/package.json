@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsup",
-    "dev": "yarn with-env tsup --watch",
+    "dev": "concurrently \"yarn db:generate\" \"yarn watch\"",
+    "watch": "yarn with-env tsup --watch",
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "yarn with-env prisma generate",
     "db:push": "yarn with-env prisma db push --skip-generate",
@@ -18,6 +19,7 @@
     "@prisma/client": "^4.15.0"
   },
   "devDependencies": {
+    "concurrently": "^8.2.0",
     "dotenv-cli": "^7.2.1",
     "prisma": "^4.15.0",
     "tsup": "^7.1.0",

@@ -8,6 +8,7 @@ const config = {
     "prettier",
   ],
   rules: {
+    // typescript-eslint rules
     "@next/next/no-html-link-for-pages": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/no-unused-vars": [
@@ -22,6 +23,11 @@ const config = {
       "error",
       { prefer: "type-imports", fixStyle: "inline-type-imports" },
     ],
+    "@typescript-eslint/no-floating-promises": 0,
+
+    // React
+    "react/display-name": 0,
+    "@typescript-eslint/no-misused-promises": 1,
   },
   ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
   reportUnusedDisableDirectives: true,

@@ -31,14 +31,15 @@ export const fixUrl = (url: string): string => {
 };
 
 /**
- * Remove http(s):// and www. from a URL
+ * Remove http(s)://, www., and trailing slashes from a URL
  *
  * @param url URL string
  */
 export const removeUrlPrefix = (url: string): string => {
   const regExWWW = /^(www\.)/i;
 
-  const newUrl = url.replace(regExProtocol, "").replace(regExWWW, "");
+  const newUrl =
+    url.replace(regExProtocol, "").replace(regExWWW, "").split("/")[0] ?? "";
 
   return newUrl.trim();
 };
@@ -47,8 +48,9 @@ export const removeUrlPrefix = (url: string): string => {
  * Check if a URL is valid and not in the blocked domains list
  *
  * @param url URL string to check
+ * @param checkDomain Check if the domain is in the blocked domains list
  */
-export const isValidURL = (url: string): boolean => {
+export const isValidURL = (url: string, checkDomain = true): boolean => {
   const regEx =
     /^(https?:\/\/)?(www\.)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 
@@ -62,12 +64,12 @@ export const isValidURL = (url: string): boolean => {
   const myHost = removeUrlPrefix(MY_URL || "");
   const urlHost = removeUrlPrefix(url);
 
+  const isDomainCheck = checkDomain ? !BLOCKED_DOMAINS.includes(urlHost) : true;
+
   // Check if url is valid, not the same as the our own url, and not in the blocked domains list
-  return (
-    regEx.test(urlHost) &&
-    myHost !== urlHost &&
-    !BLOCKED_DOMAINS.includes(urlHost)
-  );
+  const isUrlValid = regEx.test(urlHost) && myHost !== urlHost && isDomainCheck;
+
+  return isUrlValid;
 };
 
 /**

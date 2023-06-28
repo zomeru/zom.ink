@@ -34,8 +34,7 @@ function CreatePostForm() {
   const [content, setContent] = useState("");
 
   const { mutate, error } = api.post.create.useMutation({
-    async onSuccess(data) {
-      console.log("data post", data);
+    async onSuccess() {
       setTitle("");
       setContent("");
       await ctx.post.all.invalidate();
@@ -153,7 +152,7 @@ function AuthShowcase() {
       )}
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={session ? () => void signOut() : () => void signIn()}
+        onClick={session ? () => void signOut() : () => void signIn("discord")}
       >
         {session ? "Sign out" : "Sign in"}
       </button>

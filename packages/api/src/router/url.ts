@@ -33,6 +33,7 @@ const createUrl = z.object({
     .or(z.literal("")),
   url: z.string().refine(isValidURL, INVALID_URL_ERROR_MESSAGE),
   userId: z.string().optional(),
+  localId: z.string().optional(),
 });
 
 const deleteUrl = z.object({
@@ -60,6 +61,17 @@ export const urlRouter = createTRPCRouter({
 
     return urls;
   }),
+  // TODO: add pagination and filtering
+  getAllByLocalId: publicProcedure
+    .input(z.string().min(1))
+    .query(async ({ ctx, input }) => {
+      const urls = await ctx.prisma.url.findMany({
+        where: { userId: input },
+        orderBy: { id: "desc" },
+      });
+
+      return urls;
+    }),
   bySlug: publicProcedure.input(getUrlBySlug).query(async ({ ctx, input }) => {
     const { slug, userAgent } = input;
 

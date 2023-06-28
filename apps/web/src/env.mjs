@@ -9,13 +9,14 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     DATABASE_DIRECT_URL: z.string().url(),
+    SHADOW_DATABASE_URL: z.string().url(),
   },
   /**
    * Specify your client-side environment variables schema here.
    * For them to be exposed to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_URL: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -23,6 +24,8 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_DIRECT_URL: process.env.DATABASE_DIRECT_URL,
+    SHADOW_DATABASE_URL: process.env.SHADOW_DATABASE_URL,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

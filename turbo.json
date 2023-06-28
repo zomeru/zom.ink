@@ -20,7 +20,12 @@
     },
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".next/**", ".expo/**"]
+      "outputs": [".next/**"]
+    },
+    "start": {
+      "dependsOn": ["^build", "^db:generate"],
+      "persistent": true,
+      "cache": false
     },
     "lint": {},
     "lint:fix": {},
@@ -39,6 +44,7 @@
     "CI",
     "DATABASE_URL",
     "DATABASE_DIRECT_URL",
+    "SHADOW_DATABASE_URL",
     "DISCORD_CLIENT_ID",
     "DISCORD_CLIENT_SECRET",
     "EXPO_ROUTER_APP_ROOT",
