@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { type TRPCClientErrorLike } from "@trpc/client";
+import { type UseTRPCQueryResult } from "@trpc/react-query/shared";
+import { type inferRouterOutputs } from "@trpc/server";
 import { Formik, type FormikProps } from "formik";
 import { useSession } from "next-auth/react";
 import nProgress from "nprogress";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
+import { type AppRouter } from "@zomink/api";
 import { fixUrl, isValidURL, slugGenerator } from "@zomink/utilities";
 
 import { api } from "~/utils/api";
@@ -13,6 +17,11 @@ import { APP_NAME, LOCAL_USER_ID } from "~/constants";
 import { useError } from "~/hooks";
 import { createShortURLSchema, type CreateShortURLSchemaType } from "~/schema";
 import { ShortenedURLs } from "./ShortenedURLs";
+
+type UrlQuery = UseTRPCQueryResult<
+  inferRouterOutputs<AppRouter>["url"]["all"],
+  TRPCClientErrorLike<AppRouter>
+>;
 
 export const ShortenField = () => {
   const { data: session } = useSession();
@@ -30,19 +39,20 @@ export const ShortenField = () => {
     setLocalId(local);
   }, []);
 
-  const userUrls = api.url.all.useQuery(session?.user?.id ?? "");
-  const localUrls = api.url.getAllByLocalId.useQuery(localId);
+  let urls: UrlQuery;
+
+  if (session?.user) {
+    urls = api.url.all.useQuery(session?.user?.id ?? "");
+  } else {
+    urls = api.url.getAllByLocalId.useQuery(localId);
+  }
 
   const { mutate } = api.url.create.useMutation({
     onSuccess: async () => {
       await ctx.url.all.invalidate();
       await ctx.url.getAllByLocalId.invalidate();
 
-      if (session?.user) {
-        userUrls.refetch();
-      } else {
-        localUrls.refetch();
-      }
+      urls.refetch();
     },
     onSettled: () => {
       nProgress.done();
@@ -76,9 +86,7 @@ export const ShortenField = () => {
     }
   };
 
-  const hasUrls =
-    (userUrls && !!userUrls.data?.length) ||
-    (localUrls && !!localUrls.data?.length);
+  const hasUrls = urls && !!urls.data?.length;
 
   return (
     <section
@@ -179,7 +187,7 @@ export const ShortenField = () => {
             </p>
             <TextError
               showError={
-                !shortenError &&
+                !!shortenError &&
                 !!errors.slug &&
                 !!values.slug &&
                 values.slug.length > 0
@@ -189,7 +197,9 @@ export const ShortenField = () => {
               dotClassName={hasUrls ? "-translate-y-[8px]" : ""}
             />
             <TextError
-              showError={!shortenError && !!errors.url && values.url.length > 0}
+              showError={
+                !!shortenError && !!errors.url && values.url.length > 0
+              }
               errorText={errors.url!}
               className={`mb-[20px] ${hasUrls ? "h-[25px]" : ""}`}
               dotClassName={hasUrls ? "-translate-y-[8px]" : ""}
@@ -204,9 +214,7 @@ export const ShortenField = () => {
             {shortenError && !!errors.url && hasUrls && (
               <div className="mt-[10px] h-[1px]" />
             )}
-            <ShortenedURLs
-              urls={session?.user ? userUrls.data : localUrls.data}
-            />
+            <ShortenedURLs urls={urls.data} />
           </form>
         )}
       </Formik>

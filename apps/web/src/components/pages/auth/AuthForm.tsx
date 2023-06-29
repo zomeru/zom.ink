@@ -1,45 +1,93 @@
-import React from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
-import { Formik } from "formik";
+import { useRouter } from "next/navigation";
+import { Formik, type FormikProps } from "formik";
 import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 import { AiFillGithub } from "react-icons/ai";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
+import { api } from "~/utils/api";
 import { APP_NAME } from "~/constants";
-import { signInSchema, signUpSchema } from "~/schema";
+import { signInSchema, signUpSchema, type AuthSchemaType } from "~/schema";
 
 export type AuthValues = {
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirmPassword: string;
 };
 
 interface AuthFormProps {
   type: "signIn" | "signUp";
-  onSubmit: (
-    values: AuthValues,
-    setSubmitting: (submit: boolean) => void,
-  ) => void;
+
   error?: string;
 }
 
-export const AuthForm = ({ type, onSubmit, error }: AuthFormProps) => {
+const validationSchema = {
+  signIn: signInSchema,
+  signUp: signUpSchema,
+};
+
+export const AuthForm = ({ type, error }: AuthFormProps) => {
+  const router = useRouter();
+
+  const formikRef = useRef<FormikProps<AuthSchemaType>>(null);
+
+  const handleSignIn = async (): Promise<void> => {
+    const response = await signIn("credentials", {
+      email: formikRef.current?.values.email,
+      password: formikRef.current?.values.password,
+      redirect: false,
+    });
+
+    if (response?.error) {
+      formikRef.current?.setSubmitting(false);
+      toast.error(response.error);
+    }
+
+    if (response?.ok) {
+      router.push("/");
+    }
+  };
+
+  const { mutate } = api.auth.createUser.useMutation({
+    onSuccess: async () => {
+      await handleSignIn();
+    },
+    onSettled: () => {
+      formikRef.current?.setSubmitting(false);
+      formikRef.current?.resetForm();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const buttonText = type === "signIn" ? "Log in" : "Sign Up";
   const buttonTextReverse = type === "signIn" ? "Sign Up" : "Log in";
+
+  const onSubmit = async (values: AuthValues): Promise<void> => {
+    formikRef.current?.setSubmitting(true);
+
+    if (type === "signIn") {
+      await handleSignIn();
+    } else {
+      mutate({
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
+    }
+  };
 
   return (
     <section className="padding-sides mb-[150px] mt-[50px]">
       <Formik
-        initialValues={
-          type === "signIn"
-            ? { email: "", password: "" }
-            : { email: "", password: "", confirmPassword: "" }
-        }
-        validationSchema={toFormikValidationSchema(
-          type === "signIn" ? signInSchema : signUpSchema,
-        )}
-        onSubmit={(values, { setSubmitting }) => {
-          onSubmit(values, setSubmitting);
+        innerRef={formikRef}
+        initialValues={{ email: "", password: "", confirmPassword: "" }}
+        validationSchema={toFormikValidationSchema(validationSchema[type])}
+        onSubmit={(values) => {
+          onSubmit(values);
         }}
       >
         {({

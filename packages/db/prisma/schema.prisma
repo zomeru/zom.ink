@@ -50,6 +50,8 @@ model User {
     id            String    @id @default(cuid())
     name          String?
     email         String?   @unique
+    username      String?   @unique
+    password      String?
     emailVerified DateTime?
     image         String?
 
@@ -57,6 +59,8 @@ model User {
     sessions Session[]
     urls     Url[]
     clicks   Click[]
+
+    @@index([email])
 }
 
 model VerificationToken {

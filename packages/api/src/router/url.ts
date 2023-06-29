@@ -93,12 +93,6 @@ export const urlRouter = createTRPCRouter({
         });
       }
 
-      // Increment click count by 1
-      await ctx.prisma.url.update({
-        where: { slug },
-        data: { clickCount: { increment: 1 } },
-      });
-
       return url;
     } catch (error) {
       throw new TRPCError({
@@ -106,6 +100,12 @@ export const urlRouter = createTRPCRouter({
         message: INVALID_URL_ENTERED_ERROR_MESSAGE,
       });
     } finally {
+      // Increment click count by 1
+      await ctx.prisma.url.update({
+        where: { slug },
+        data: { clickCount: { increment: 1 } },
+      });
+
       const foundUrl = await ctx.prisma.url.findUnique({ where: { slug } });
 
       if (userAgent !== undefined && foundUrl) {
