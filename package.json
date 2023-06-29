@@ -21,6 +21,8 @@
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push db:generate",
     "db:studio": "turbo db:studio",
+    "db:migrate:dev": "turbo db:migrate:dev",
+    "db:migrate:prod": "turbo db:migrate:prod",
     "format": "prettier --write \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --ignore-path .gitignore",
     "prepare": "husky install",
     "lint": "turbo lint && manypkg check",

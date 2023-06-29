@@ -51,3 +51,6 @@ tsup.config.bundled_*
 # sitemap
 robots.txt
 sitemap*.xml
+
+#db
+migrations

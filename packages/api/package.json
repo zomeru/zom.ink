@@ -20,9 +20,11 @@
     "@zomink/db": "^0.1.0",
     "@zomink/utilities": "^0.1.0",
     "superjson": "1.9.1",
+    "ua-parser-js": "^1.0.35",
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/ua-parser-js": "^0.7.36",
     "@zomink/eslint-config": "^0.1.0",
     "eslint": "^8.42.0",
     "tsup": "^7.1.0",
