@@ -22,6 +22,9 @@
       "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**"]
     },
+    "postbuild": {
+      "dependsOn": ["^build", "^db:generate"]
+    },
     "start": {
       "dependsOn": ["^build", "^db:generate"],
       "persistent": true,
