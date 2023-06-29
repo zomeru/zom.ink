@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { type RouterOutputs } from "@zomink/api";
+import { removeUrlPrefix } from "@zomink/utilities";
 
 import { APP_URL } from "~/constants";
 
@@ -101,11 +102,14 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
           );
         }}
         copied={urlCopied === firstItem?.id}
-        shortURL={`${APP_URL}/${firstItem?.slug}`}
+        shortURL={`${removeUrlPrefix(`${APP_URL}/${firstItem?.slug}`, false)}`}
         url={firstItem?.url ?? ""}
         showSeparator
       />
       {otherItems.map((item) => {
+        const url = `${APP_URL}/${item.slug}`;
+        const shortURL = removeUrlPrefix(url, false);
+
         return (
           <UrlComponent
             onCopy={async (): Promise<void> => {
@@ -113,7 +117,7 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
             }}
             copied={urlCopied === item.id}
             key={item.id}
-            shortURL={`${APP_URL}/${item.slug}`}
+            shortURL={shortURL}
             url={item.url}
             showSeparator
           />

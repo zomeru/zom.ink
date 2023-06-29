@@ -17,12 +17,10 @@ coverage
 out/
 next-env.d.ts
 
-# expo
-.expo/
-dist/
 
 # production
 build
+dist
 
 # misc
 .DS_Store
@@ -49,3 +47,7 @@ yarn-error.log*
 
 #tsup
 tsup.config.bundled_*
+
+# sitemap
+robots.txt
+sitemap*.xml
