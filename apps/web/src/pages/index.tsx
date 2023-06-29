@@ -1,5 +1,7 @@
 import React from "react";
+import { NextSeo } from "next-seo";
 
+import { seoConfig } from "~/utils/seoConfig";
 import {
   Banner,
   FAQ,
@@ -12,6 +14,7 @@ import { Layout } from "~/components";
 const Home = () => {
   return (
     <Layout>
+      <NextSeo {...seoConfig()} />
       <div className="flex h-full w-full flex-col items-center justify-center">
         <Hero />
         <ShortenField />

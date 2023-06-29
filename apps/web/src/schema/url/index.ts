@@ -1,20 +1,23 @@
 import { object, z } from "zod";
 
+import {
+  INVALID_DOMAIN_ERROR_MESSAGE,
+  INVALID_SLUG_INPUT_ERROR_MESSAGE,
+  INVALID_URL_ERROR_MESSAGE,
+} from "@zomink/api/src/error";
 import { isValidURL } from "@zomink/utilities";
 
 export const createShortURLSchema = object({
   url: z
     .string()
-    .min(1, "Invalid URL")
-    .refine((url) => isValidURL(url, false), "Invalid URL")
-    .refine(
-      (url) => isValidURL(url),
-      "We're sorry but we don't accept links from this domain",
-    ),
+    .min(1)
+    .refine((url) => isValidURL(url, false), INVALID_URL_ERROR_MESSAGE)
+    .refine((url) => isValidURL(url), INVALID_DOMAIN_ERROR_MESSAGE),
   userId: z.string().optional(),
   slug: z
     .string()
-    .min(5, "Alias must be 5 alphanumeric characters")
+    .min(5, INVALID_SLUG_INPUT_ERROR_MESSAGE)
+    .max(32, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .optional()
     .or(z.literal("")),
   localId: z.string().optional(),

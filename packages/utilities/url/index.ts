@@ -35,13 +35,12 @@ export const fixUrl = (url: string): string => {
  *
  * @param url URL string
  */
-export const removeUrlPrefix = (url: string): string => {
+export const removeUrlPrefix = (url: string, domainOnly = true): string => {
   const regExWWW = /^(www\.)/i;
 
-  const newUrl =
-    url.replace(regExProtocol, "").replace(regExWWW, "").split("/")[0] ?? "";
+  const newUrl = url.replace(regExProtocol, "").replace(regExWWW, "");
 
-  return newUrl.trim();
+  return domainOnly ? newUrl.split(".")[0] ?? "" : newUrl;
 };
 
 /**
@@ -77,12 +76,12 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
 };
 
 /**
- * Check if a slug is alphanumeric
+ * Check if a slug is alphanumeric and not longer than 32 characters
  *
  * @param slug Slug string to check
  */
 export const isValidSlug = (slug: string): boolean => {
   const regEx = /^[a-zA-Z0-9]+$/;
 
-  return regEx.test(slug);
+  return regEx.test(slug) && slug.length <= 32;
 };
