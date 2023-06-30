@@ -5,7 +5,7 @@ import {
   INVALID_SLUG_INPUT_ERROR_MESSAGE,
   INVALID_URL_ERROR_MESSAGE,
 } from "@zomink/api/src/error";
-import { isValidURL } from "@zomink/utilities";
+import { isValidSlug, isValidURL } from "@zomink/utilities";
 
 export const createShortURLSchema = object({
   url: z
@@ -19,7 +19,10 @@ export const createShortURLSchema = object({
     .min(5, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .max(32, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine((slug) => {
+      return slug === "" || slug === undefined || isValidSlug(slug);
+    }, INVALID_SLUG_INPUT_ERROR_MESSAGE),
   localId: z.string().optional(),
 });
 

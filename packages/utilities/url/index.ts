@@ -76,12 +76,13 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
 };
 
 /**
- * Check if a slug is alphanumeric and not longer than 32 characters
+ * Check if a slug is alphanumeric
  *
  * @param slug Slug string to check
  */
 export const isValidSlug = (slug: string): boolean => {
   const regEx = /^[a-zA-Z0-9]+$/;
+  const _slug = slug.trim();
 
-  return regEx.test(slug) && slug.length <= 32;
+  return !_slug.includes(" ") && regEx.test(_slug);
 };

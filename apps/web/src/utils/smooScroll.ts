@@ -1,4 +1,4 @@
-const smoothScroll = (
+export const smoothScroll = (
   e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
   href?: string,
 ): void => {
@@ -25,5 +25,3 @@ const smoothScroll = (
     }
   }
 };
-
-export default smoothScroll;

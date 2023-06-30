@@ -23,9 +23,11 @@ import { prisma } from "@zomink/db";
  * processing a request
  *
  */
-type CreateContextOptions = {
+interface CreateContextOptions extends CreateNextContextOptions {
   session: Session | null;
-};
+  req: CreateNextContextOptions["req"];
+  res: CreateNextContextOptions["res"];
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
@@ -40,6 +42,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    req: opts.req,
+    res: opts.res,
   };
 };
 
@@ -56,6 +60,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
+    res,
   });
 };
 

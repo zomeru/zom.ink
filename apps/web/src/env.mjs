@@ -10,6 +10,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     DATABASE_DIRECT_URL: z.string().url(),
     SHADOW_DATABASE_URL: z.string().url(),
+    MY_IP_ADDRESS: z.string().ip(),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -26,6 +27,7 @@ export const env = createEnv({
     DATABASE_DIRECT_URL: process.env.DATABASE_DIRECT_URL,
     SHADOW_DATABASE_URL: process.env.SHADOW_DATABASE_URL,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+    MY_IP_ADDRESS: process.env.MY_IP_ADDRESS,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

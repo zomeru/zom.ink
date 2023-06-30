@@ -45,7 +45,7 @@ html {
   }
 
   .btn-secondary-lg {
-    @apply border-primary-200 text-primary-200 h-[45px] rounded-lg border bg-white px-[20px] transition-all duration-200 ease-in-out hover:bg-sky-100 sm:h-[55px] sm:px-[30px];
+    @apply border-primary-200 text-primary-200 flex h-[45px] items-center justify-center rounded-lg border bg-white px-[20px] transition-all duration-200 ease-in-out hover:bg-sky-100 sm:h-[55px] sm:px-[30px];
   }
 
   .btn-white-lg {

@@ -28,7 +28,7 @@ export const NAV_LINKS = [
   },
   {
     name: "GitHub",
-    link: "https://github.com/zomeru/zomink-client",
+    link: "https://github.com/zomeru/zom.ink",
   },
   {
     name: "Donate",
@@ -213,12 +213,12 @@ export const FOOTER_LINKS: FOOTER[] = [
       },
       {
         name: "Bug Report",
-        link: "https://github.com/zomeru/zomink-client/issues/new",
+        link: "https://github.com/zomeru/zom.ink/issues/new",
         isNewTab: true,
       },
       {
         name: "Feature Request",
-        link: "https://github.com/zomeru/zomink-client/issues/new",
+        link: "https://github.com/zomeru/zom.ink/issues/new",
         isNewTab: true,
       },
     ],

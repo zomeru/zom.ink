@@ -8,7 +8,7 @@ import type {
 import { INVALID_URL_ENTERED_ERROR_MESSAGE } from "@zomink/api/src/error";
 import { type Prisma } from "@zomink/db";
 
-import { ssrApi } from "~/utils/api";
+import { ssrApi } from "~/utils";
 import NotFound from "./404";
 
 type SlugProps = InferGetServerSidePropsType<typeof getServerSideProps>;

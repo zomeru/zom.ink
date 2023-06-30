@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
-import smoothScroll from "~/utils/smooScroll";
 import { NAV_LINKS } from "~/constants";
+import { smoothScroll } from "~/utils";
 import { Logo } from "./Logo";
 
 export const Navbar = () => {
@@ -44,11 +44,19 @@ export const Navbar = () => {
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (newName.startsWith("#")) {
-                      smoothScroll(e);
-                    }
-                  }}
+                >
+                  {newName}
+                </Link>
+              );
+            }
+
+            if (link.startsWith("#")) {
+              return (
+                <Link
+                  href={link}
+                  key={newName}
+                  className="links"
+                  onClick={smoothScroll}
                 >
                   {newName}
                 </Link>

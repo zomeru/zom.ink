@@ -1,8 +1,8 @@
 import React from "react";
 import { NextSeo } from "next-seo";
 
-import { seoConfig } from "~/utils/seoConfig";
 import { Maintenance } from "~/components";
+import { seoConfig } from "~/utils";
 
 const TermsOfService = () => {
   return (
