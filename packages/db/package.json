@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsup",
-    "dev": "concurrently \"yarn db:generate\" \"yarn watch\"",
+    "dev": "concurrently \"yarn db:push\" \"yarn db:generate\" \"yarn watch\"",
     "watch": "yarn with-env tsup --watch",
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "yarn with-env prisma generate",

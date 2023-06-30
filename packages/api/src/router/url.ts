@@ -32,9 +32,11 @@ const createUrl = z.object({
     .string()
     .min(5, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .max(32, INVALID_SLUG_INPUT_ERROR_MESSAGE)
-    .refine(isValidSlug, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine((slug) => {
+      return slug === "" || slug === undefined || isValidSlug(slug);
+    }, INVALID_SLUG_INPUT_ERROR_MESSAGE),
   url: z
     .string()
     .min(1)
@@ -54,6 +56,7 @@ const updateSlug = z.object({
   slug: z
     .string()
     .min(5, INVALID_SLUG_INPUT_ERROR_MESSAGE)
+    .max(32, INVALID_SLUG_INPUT_ERROR_MESSAGE)
     .refine(isValidSlug, INVALID_SLUG_INPUT_ERROR_MESSAGE),
   userId: z.string(),
 });

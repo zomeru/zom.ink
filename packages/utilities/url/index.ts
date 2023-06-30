@@ -82,6 +82,7 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
  */
 export const isValidSlug = (slug: string): boolean => {
   const regEx = /^[a-zA-Z0-9]+$/;
+  const _slug = slug.trim();
 
-  return regEx.test(slug) && slug.length <= 32;
+  return !_slug.includes(" ") && regEx.test(_slug);
 };

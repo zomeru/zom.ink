@@ -6,6 +6,7 @@ import { type inferRouterOutputs } from "@trpc/server";
 import { Formik, type FormikProps } from "formik";
 import { useSession } from "next-auth/react";
 import nProgress from "nprogress";
+import { toast } from "react-hot-toast";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 import { type AppRouter } from "@zomink/api";
@@ -14,7 +15,6 @@ import { fixUrl, isValidURL, slugGenerator } from "@zomink/utilities";
 import { api } from "~/utils/api";
 import { TextError } from "~/components/TextError";
 import { APP_NAME, LOCAL_USER_ID } from "~/constants";
-import { useError } from "~/hooks";
 import { createShortURLSchema, type CreateShortURLSchemaType } from "~/schema";
 import { ShortenedURLs } from "./ShortenedURLs";
 
@@ -29,7 +29,6 @@ export const ShortenField = () => {
 
   const formikRef = useRef<FormikProps<CreateShortURLSchemaType>>(null);
 
-  const [shortenError, setShortenError] = useError();
   const [localId, setLocalId] = useState("");
 
   useEffect(() => {
@@ -60,12 +59,11 @@ export const ShortenField = () => {
       formikRef.current?.resetForm();
     },
     onError: (err) => {
-      setShortenError(err.message);
+      toast.error(err.message);
     },
   });
 
   const onShorten = (values: { url: string; slug?: string }) => {
-    setShortenError("");
     nProgress.configure({ showSpinner: true });
     nProgress.start();
 
@@ -186,34 +184,15 @@ export const ShortenField = () => {
               , and <strong>Use of Cookies</strong>.
             </p>
             <TextError
-              showError={
-                !!shortenError &&
-                !!errors.slug &&
-                !!values.slug &&
-                values.slug.length > 0
+              errorText={
+                errors.url === "Required" ? "" : errors.url ?? errors.slug ?? ""
               }
-              errorText={errors.slug!}
-              className={`mb-[20px] ${hasUrls ? "h-[25px]" : ""}`}
-              dotClassName={hasUrls ? "-translate-y-[8px]" : ""}
-            />
-            <TextError
-              showError={
-                !!shortenError && !!errors.url && values.url.length > 0
-              }
-              errorText={errors.url!}
-              className={`mb-[20px] ${hasUrls ? "h-[25px]" : ""}`}
-              dotClassName={hasUrls ? "-translate-y-[8px]" : ""}
-            />
-            <TextError
-              showError={!!shortenError}
-              errorText={shortenError!}
-              className={`mb-[20px] ${hasUrls ? "h-[25px]" : ""}`}
-              dotClassName={hasUrls ? "-translate-y-[8px]" : ""}
             />
 
-            {shortenError && !!errors.url && hasUrls && (
-              <div className="mt-[10px] h-[1px]" />
-            )}
+            {(errors.url === "Required"
+              ? false
+              : !!errors.url || !!errors.slug) &&
+              !!hasUrls && <div className="mt-[10px] h-[1px]" />}
             <ShortenedURLs urls={urls.data} />
           </form>
         )}
