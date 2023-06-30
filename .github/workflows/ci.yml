@@ -28,13 +28,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Get Yarn cache directory
         id: yarn-cache
@@ -49,15 +49,11 @@ jobs:
       - name: Install deps (with cache)
         run: yarn install
 
-      # TODO: Free for all to find a better solution here.
-      - name: Build database
-        run: yarn turbo build --filter=db
-
       - name: Generate Prisma Client
-        run: yarn turbo db:generate
+        run: yarn db:generate
 
       - name: Build, lint and type-check
-        run: yarn turbo build --filter=!db lint type-check
+        run: yarn build lint type-check
 
       - name: Check workspaces
         run: yarn manypkg check

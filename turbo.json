@@ -31,7 +31,7 @@
       "outputs": [".next/**"]
     },
     "postbuild": {
-      "dependsOn": ["^build", "^db:generate"]
+      "dependsOn": ["^build"]
     },
     "start": {
       "dependsOn": ["^build", "^db:generate"],

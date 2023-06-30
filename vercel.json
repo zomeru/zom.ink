@@ -2,5 +2,6 @@
   "github": {
     "silent": true
   },
-  "buildCommand": "turbo run build"
+  "regions": ["hkg1"],
+  "trailingSlash": false
 }

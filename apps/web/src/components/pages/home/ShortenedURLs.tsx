@@ -59,9 +59,9 @@ const UrlComponent = ({
   );
 };
 
-export type UrlType = RouterOutputs["url"]["getAllByLocalId" | "all"];
+type UrlsType = RouterOutputs["url"]["getAllByLocalId" | "all"];
 
-export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
+export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
   const [urlCopied, setUrlCopied] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
 
   if (!urls || urls.length === 0) return null;
 
-  const firstItem = urls[0];
+  const firstItem = urls[0] ?? ({} as UrlsType[0]);
   const otherItems = urls.length > 3 ? urls.slice(1, 3) : urls.slice(1);
 
   const copyToClipBoard = async (url: string, id: string) => {
@@ -106,7 +106,7 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlType }) => {
         url={firstItem?.url ?? ""}
         showSeparator
       />
-      {otherItems.map((item) => {
+      {otherItems.map((item: UrlsType[0]) => {
         const url = `${APP_URL}/${item.slug}`;
         const shortURL = removeUrlPrefix(url, false);
 

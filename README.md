@@ -7,7 +7,7 @@ Zom.ink - Free Link Management Platform
 1. Install dependencies using yarn
 
 ```bash
-yarn install
+yarn i
 ```
 
 2. Copy and modify `.env`
