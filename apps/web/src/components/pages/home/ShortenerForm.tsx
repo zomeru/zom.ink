@@ -12,10 +12,10 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { type AppRouter } from "@zomink/api";
 import { fixUrl, isValidURL, slugGenerator } from "@zomink/utilities";
 
-import { api } from "~/utils/api";
 import { TextError } from "~/components/TextError";
 import { APP_NAME, LOCAL_USER_ID } from "~/constants";
 import { createShortURLSchema, type CreateShortURLSchemaType } from "~/schema";
+import { api } from "~/utils";
 import { ShortenedURLs } from "./ShortenedURLs";
 
 type UrlQuery = UseTRPCQueryResult<

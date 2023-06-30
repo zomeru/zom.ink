@@ -1,7 +1,6 @@
 import React from "react";
 import { NextSeo } from "next-seo";
 
-import { seoConfig } from "~/utils/seoConfig";
 import {
   Banner,
   FAQ,
@@ -10,6 +9,7 @@ import {
   ShortenField,
 } from "~/components/pages/home";
 import { Layout } from "~/components";
+import { seoConfig } from "~/utils";
 
 const Home = () => {
   return (

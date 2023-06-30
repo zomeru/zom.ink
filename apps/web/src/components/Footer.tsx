@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import Link from "next/link";
 
 import { APP_NAME, FOOTER_LINKS, FOOTER_SOCIALS } from "~/constants";
+import { smoothScroll } from "~/utils";
 import { Logo } from "./Logo";
 
 type FooterProps = Record<string, never>;
@@ -17,17 +18,32 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
                 {title}
               </h3>
               <div className="flex flex-col space-y-1">
-                {links.map(({ name, link, isNewTab }) => (
-                  <Link
-                    key={name}
-                    href={link}
-                    target={isNewTab ? "_blank" : "_self"}
-                    rel={isNewTab ? "noopener noreferrer" : ""}
-                    className="simple-links text-infoText text-center sm:text-start "
-                  >
-                    {name}
-                  </Link>
-                ))}
+                {links.map(({ name, link, isNewTab }) => {
+                  if (link.startsWith("#")) {
+                    return (
+                      <Link
+                        href={link}
+                        key={name}
+                        className="simple-links text-infoText text-center sm:text-start "
+                        onClick={smoothScroll}
+                      >
+                        {name}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={name}
+                      href={link}
+                      target={isNewTab ? "_blank" : "_self"}
+                      rel={isNewTab ? "noopener noreferrer" : ""}
+                      className="simple-links text-infoText text-center sm:text-start "
+                    >
+                      {name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           ))}

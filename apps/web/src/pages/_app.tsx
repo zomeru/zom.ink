@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import nprogress from "nprogress";
 import { Toaster } from "react-hot-toast";
 
-import { api } from "~/utils/api";
+import { api } from "~/utils";
 
 Router.events.on("routeChangeStart", () => {
   nprogress.configure({ showSpinner: false });

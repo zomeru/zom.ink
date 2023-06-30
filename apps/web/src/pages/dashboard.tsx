@@ -1,9 +1,9 @@
 import React from "react";
 import { NextSeo } from "next-seo";
 
-import { seoConfig } from "~/utils/seoConfig";
 import { Layout } from "~/components";
 import { withSessionCheck } from "~/lib";
+import { seoConfig } from "~/utils";
 
 const Dashboard = () => {
   return (

@@ -7,9 +7,9 @@ import { toast } from "react-hot-toast";
 import { AiFillGithub } from "react-icons/ai";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
-import { api } from "~/utils/api";
 import { APP_NAME } from "~/constants";
 import { signInSchema, signUpSchema, type AuthSchemaType } from "~/schema";
+import { api } from "~/utils";
 
 export type AuthValues = {
   email: string;

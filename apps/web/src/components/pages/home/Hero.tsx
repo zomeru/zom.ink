@@ -1,9 +1,10 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import smoothScroll from "~/utils/smooScroll";
 import { APP_DESCRIPTION, APP_NAME } from "~/constants";
+import { smoothScroll } from "~/utils";
 
 export const Hero = () => {
   const router = useRouter();
@@ -30,13 +31,14 @@ export const Hero = () => {
                 Get started
               </button>
 
-              <button
+              <Link
                 type="button"
+                href="#features"
                 className="btn-secondary-lg"
-                onClick={(e) => smoothScroll(e, "#features")}
+                onClick={smoothScroll}
               >
                 Explore features
-              </button>
+              </Link>
             </div>
           </div>
           <div className="relative hidden h-full w-full md:block">
