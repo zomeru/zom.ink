@@ -27,11 +27,11 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build"],
       "outputs": [".next/**"]
     },
     "postbuild": {
-      "dependsOn": ["^build", "^db:generate"]
+      "dependsOn": ["^build"]
     },
     "start": {
       "dependsOn": ["^build", "^db:generate"],
