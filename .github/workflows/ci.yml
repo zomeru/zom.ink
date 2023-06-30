@@ -28,36 +28,44 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Get Yarn cache directory
-        id: yarn-cache
-        run: |
-          echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-
-      - name: Setup yarn cache
-        uses: c-hive/gha-yarn-cache@v2
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
         with:
-          node-version: 18.16.1
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install deps (with cache)
-        run: yarn install
+        run: pnpm install
 
       # TODO: Free for all to find a better solution here.
       - name: Build database
-        run: yarn turbo build --filter=db
+        run: pnpm turbo build --filter=db
 
       - name: Generate Prisma Client
-        run: yarn turbo db:generate
+        run: pnpm turbo db:generate
 
       - name: Build, lint and type-check
-        run: yarn turbo build --filter=!db lint type-check
+        run: pnpm turbo build --filter=!db lint type-check
 
       - name: Check workspaces
-        run: yarn manypkg check
+        run: pnpm manypkg check
