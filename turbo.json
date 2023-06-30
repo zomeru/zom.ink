@@ -27,7 +27,7 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**"]
     },
     "postbuild": {
