@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { type RouterOutputs } from "@zomink/api";
 import { removeUrlPrefix } from "@zomink/utilities";
@@ -62,6 +63,8 @@ const UrlComponent = ({
 type UrlsType = RouterOutputs["url"]["getAllByLocalId" | "all"];
 
 export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
+  const router = useRouter();
+
   const [urlCopied, setUrlCopied] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -128,7 +131,11 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
           <h2 className="text-primary-500 text-base font-bold sm:text-xl">
             Want to manage, customize, and track your links?
           </h2>
-          <button type="button" className="btn-primary">
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => router.push("/auth/signup")}
+          >
             Get Started
           </button>
         </div>

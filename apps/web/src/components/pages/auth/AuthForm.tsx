@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Formik, type FormikProps } from "formik";
 import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
@@ -30,6 +30,9 @@ const validationSchema = {
 
 export const AuthForm = ({ type, error }: AuthFormProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const authError = searchParams.get("error");
 
   const formikRef = useRef<FormikProps<AuthSchemaType>>(null);
 
@@ -181,10 +184,10 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
 
             <p
               className={`duration-800 text-red-400 transition-all ease-in-out ${
-                error ? "opacity-1 h-full" : " h-0 opacity-0"
+                error || authError ? "opacity-1 h-full" : " h-0 opacity-0"
               }`}
             >
-              {error}
+              {error ?? authError}
             </p>
 
             <button

@@ -14,10 +14,20 @@ datasource db {
     shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-// NextAuth.js Models
-// NOTE: When using postgresql, mysql or sqlserver, 
-// uncomment the @db.Text annotations below
-// @see https://next-auth.js.org/schemas/models
+// Enums
+// Docs: https://www.prisma.io/docs/guides/upgrade-guides/upgrade-from-prisma-1/schema-incompatibilities-postgresql#enums-are-represented-as-text-in-database
+
+enum Role {
+    user
+    admin
+    superadmin
+}
+
+enum TeamRole {
+    admin
+    member
+}
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -54,11 +64,19 @@ model User {
     password      String?
     emailVerified DateTime?
     image         String?
+    banned        Boolean   @default(false)
+    createdAt     DateTime  @default(now())
+    role          Role      @default(user)
+
+    totalClicks Int @default(0)
+    totalUrls   Int @default(0)
 
     accounts Account[]
     sessions Session[]
     urls     Url[]
     clicks   Click[]
+
+    teamMembers TeamMember[]
 
     @@index([email])
 }
@@ -80,6 +98,7 @@ model Url {
     updatedAt  DateTime @updatedAt
     userId     String?
     localId    String?
+    isActive   Boolean  @default(true)
 
     user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
     clicks Click[]
@@ -111,4 +130,27 @@ model Click {
 
     @@index([urlId])
     @@index([userId])
+}
+
+model Team {
+    id        String   @id @default(cuid())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    members TeamMember[]
+}
+
+model TeamMember {
+    id        String   @id @default(cuid())
+    teamId    String
+    userId    String
+    role      TeamRole @default(member)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([teamId, userId])
 }

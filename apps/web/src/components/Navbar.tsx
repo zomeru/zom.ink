@@ -13,7 +13,7 @@ export const Navbar = () => {
 
   const handleSignInSignOut = () => {
     if (session?.user) {
-      signOut({ redirect: false }).then(() => router.push("/"));
+      signOut({ redirect: true, callbackUrl: "/" });
     } else {
       router.push("/auth/signup");
     }

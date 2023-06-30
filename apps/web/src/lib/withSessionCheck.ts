@@ -4,10 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@zomink/auth";
 
 /**
- * If user is not logged in, redirect to /auth/signin
- * If user is logged in, redirect to /dashboard
- *
- * @returns
+ * If user is logged in and is in auth pages, redirect to /dashboard
+ * Use this to redirect logged in users from auth pages to dashboard
  */
 export function withSessionCheck(): GetServerSideProps {
   return async (context) => {
@@ -23,15 +21,6 @@ export function withSessionCheck(): GetServerSideProps {
       return {
         redirect: {
           destination: "/dashboard",
-          permanent: false,
-        },
-      };
-    }
-
-    if (url.includes("/dashboard") && !session) {
-      return {
-        redirect: {
-          destination: "/auth/signin",
           permanent: false,
         },
       };

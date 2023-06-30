@@ -83,7 +83,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
           </div>
         </div>
       </div>
-      <div className="bg-primary-200 flex h-[40px] w-full items-center justify-center">
+      {/* <div className="bg-primary-200 flex h-[40px] w-full items-center justify-center">
         <p className="text-sm text-white sm:text-base">
           Built by{" "}
           <Link
@@ -95,7 +95,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
             Zomer Gregorio
           </Link>
         </p>
-      </div>
+      </div> */}
     </footer>
   );
 });
