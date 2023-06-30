@@ -19,6 +19,7 @@
     "clean:workspaces": "turbo clean",
     "clean:all": "rm -rf `find . -type d -name node_modules -o -name .next -o -name .next -o -name .turbo -o -name dist`",
     "db:generate": "turbo db:generate",
+    "db:generate:prod": "turbo db:generate:prod",
     "db:push": "turbo db:push db:generate",
     "db:studio": "turbo db:studio",
     "db:migrate:dev": "turbo db:migrate:dev",

@@ -11,6 +11,7 @@
     "watch": "pnpm with-env tsup --watch",
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "pnpm with-env prisma generate",
+    "db:generate:prod": "prisma generate",
     "db:push": "pnpm with-env prisma db push --skip-generate",
     "db:migrate:dev": "pnpm with-env prisma migrate dev --create-only --name \"$(date +%s)\"",
     "db:migrate:prod": "pnpm with-env prisma migrate deploy --preview-feature",
