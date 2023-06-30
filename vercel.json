@@ -2,5 +2,8 @@
   "github": {
     "silent": true
   },
-  "buildCommand": "turbo run build"
+  "buildCommand": "turbo run build",
+  "installCommand": "yarn install",
+  "regions": ["hkg1"],
+  "trailingSlash": false
 }
