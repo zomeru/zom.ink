@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 18
 
-       - name: Setup yarn
+      - name: Setup yarn
         run: npm install -g yarn
 
       - name: Get Yarn cache directory
