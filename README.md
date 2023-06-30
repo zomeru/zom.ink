@@ -4,10 +4,10 @@ Zom.ink - Free Link Management Platform
 
 ## 🛠 Set Up
 
-1. Install dependencies using pnpm
+1. Install dependencies using yarn
 
 ```bash
-pnpm i
+yarn i
 ```
 
 2. Copy and modify `.env`
@@ -19,5 +19,5 @@ cp .env.example .env
 3. Start the development server
 
 ```bash
-pnpm dev
+yarn dev
 ```

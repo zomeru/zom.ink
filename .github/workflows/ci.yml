@@ -33,35 +33,27 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.4
-        id: pnpm-install
-        with:
-          version: 8
-          run_install: false
+       - name: Setup yarn
+        run: npm install -g yarn
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
+      - name: Get Yarn cache directory
+        id: yarn-cache
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
+      - name: Setup yarn cache
+        uses: c-hive/gha-yarn-cache@v2
         with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: 18.16.1
 
       - name: Install deps (with cache)
-        run: pnpm install
+        run: yarn install
 
       - name: Generate Prisma Client
-        run: pnpm db:generate
+        run: yarn db:generate
 
       - name: Build, lint and type-check
-        run: pnpm build lint type-check
+        run: yarn build lint type-check
 
       - name: Check workspaces
-        run: pnpm manypkg check
+        run: yarn manypkg check

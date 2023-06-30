@@ -7,15 +7,14 @@
   "license": "MIT",
   "scripts": {
     "build": "tsup",
-    "dev": "concurrently \"pnpm db:push\" \"pnpm db:generate\" \"pnpm watch\"",
-    "watch": "pnpm with-env tsup --watch",
+    "dev": "concurrently \"yarn db:push\" \"yarn db:generate\" \"yarn watch\"",
+    "watch": "yarn with-env tsup --watch",
     "clean": "rm -rf .turbo node_modules",
-    "db:generate": "pnpm with-env prisma generate",
-    "db:generate:prod": "prisma generate",
-    "db:push": "pnpm with-env prisma db push --skip-generate",
-    "db:migrate:dev": "pnpm with-env prisma migrate dev --create-only --name \"$(date +%s)\"",
-    "db:migrate:prod": "pnpm with-env prisma migrate deploy --preview-feature",
-    "db:studio": "pnpm with-env prisma studio --port 5556",
+    "db:generate": "yarn with-env prisma generate",
+    "db:push": "yarn with-env prisma db push --skip-generate",
+    "db:migrate:dev": "yarn with-env prisma migrate dev --create-only --name \"$(date +%s)\"",
+    "db:migrate:prod": "yarn with-env prisma migrate deploy --preview-feature",
+    "db:studio": "yarn with-env prisma studio --port 5556",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
