@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Formik, type FormikProps } from "formik";
+import { type OAuthProviderType } from "next-auth/providers";
 import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { AiFillGithub } from "react-icons/ai";
@@ -54,8 +55,8 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
   };
 
   const { mutate } = api.auth.createUser.useMutation({
-    onSuccess: async () => {
-      await handleSignIn();
+    onSuccess: () => {
+      handleSignIn();
     },
     onSettled: () => {
       formikRef.current?.setSubmitting(false);
@@ -69,11 +70,11 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
   const buttonText = type === "signIn" ? "Log in" : "Sign Up";
   const buttonTextReverse = type === "signIn" ? "Sign Up" : "Log in";
 
-  const onSubmit = async (values: AuthValues): Promise<void> => {
+  const onSubmit = (values: AuthValues) => {
     formikRef.current?.setSubmitting(true);
 
     if (type === "signIn") {
-      await handleSignIn();
+      handleSignIn();
     } else {
       mutate({
         email: values.email,
@@ -81,6 +82,20 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
         confirmPassword: values.confirmPassword,
       });
     }
+  };
+
+  const handleProviderSignIn: React.MouseEventHandler<HTMLButtonElement> = (
+    e,
+  ) => {
+    (async () => {
+      const id = e.currentTarget.id;
+      const provider = id.replace("-sign-in", "") as OAuthProviderType;
+
+      await signIn(provider, {
+        callbackUrl: "/",
+        redirect: false,
+      });
+    })();
   };
 
   return (
@@ -124,14 +139,10 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
               </Link>
             </p>
             <button
+              id="discord-sign-in"
               type="button"
               className="btn-primary-lg mx-auto flex items-center justify-center space-x-3"
-              onClick={() =>
-                signIn("discord", {
-                  callbackUrl: "/",
-                  redirect: false,
-                })
-              }
+              onClick={handleProviderSignIn}
             >
               <AiFillGithub className="text-2xl text-white" />
               <span>{buttonText} with Discord</span>

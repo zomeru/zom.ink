@@ -1,8 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 
-const superAdminRoutes: string[] = []; // Super admin routes
-const adminRoutes: string[] = []; // Admin routes
-const protectedUserRoutes = ["/dashboard"]; // Protected user routes
+const superAdminRoutes: string[] = ["/superadmin"]; // Super admin routes
+const adminRoutes: string[] = ["/admin"]; // Admin routes
 
 export default withAuth({
   callbacks: {
@@ -23,5 +22,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: [...protectedUserRoutes, ...adminRoutes, ...superAdminRoutes],
+  matcher: ["/dashboard"], // Add other protected, admin, and super admin routes here
 };

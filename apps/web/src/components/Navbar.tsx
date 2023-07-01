@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -6,10 +6,13 @@ import { signOut, useSession } from "next-auth/react";
 import { NAV_LINKS } from "~/constants";
 import { smoothScroll } from "~/utils";
 import { Logo } from "./Logo";
+import { MyUrls } from "./pages/home/MyUrls";
 
 export const Navbar = () => {
   const router = useRouter();
   const { data: session } = useSession();
+
+  const [modalSheetOpen, setModalSheetOpen] = useState(false);
 
   const handleSignInSignOut = () => {
     if (session?.user) {
@@ -32,6 +35,18 @@ export const Navbar = () => {
             }
             const newName: string =
               session?.user && name === "My URLs" ? "Dashboard" : name;
+
+            if (newName === "My URLs") {
+              return (
+                <button
+                  key={newName}
+                  className="links"
+                  onClick={() => setModalSheetOpen(true)}
+                >
+                  {newName}
+                </button>
+              );
+            }
 
             if (["github", "donate"].indexOf(newName.toLowerCase()) > -1) {
               return (
@@ -82,6 +97,7 @@ export const Navbar = () => {
           </button>
         </div>
       </nav>
+      <MyUrls isOpen={modalSheetOpen} setOpen={setModalSheetOpen} />
     </header>
   );
 };

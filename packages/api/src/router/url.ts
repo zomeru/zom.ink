@@ -64,20 +64,13 @@ const updateSlug = z.object({
 export const urlRouter = createTRPCRouter({
   // Get all users urls
   // TODO: add pagination and filtering
-  all: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const urls = await ctx.prisma.url.findMany({
-      where: { userId: input },
-      orderBy: { id: "desc" },
-    });
-
-    return urls;
-  }),
-  // TODO: add pagination and filtering
-  getAllByLocalId: publicProcedure
+  all: publicProcedure
     .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       const urls = await ctx.prisma.url.findMany({
-        where: { localId: input },
+        where: {
+          OR: [{ userId: input }, { localId: input }],
+        },
         orderBy: { id: "desc" },
       });
 
@@ -110,6 +103,13 @@ export const urlRouter = createTRPCRouter({
       });
 
       const foundUrl = await ctx.prisma.url.findUnique({ where: { slug } });
+
+      if (foundUrl?.userId) {
+        await ctx.prisma.user.update({
+          where: { id: foundUrl.userId },
+          data: { totalClicks: { increment: 1 } },
+        });
+      }
 
       if (userAgent !== undefined && foundUrl) {
         const ipAddress =
@@ -145,6 +145,33 @@ export const urlRouter = createTRPCRouter({
       }
     }
   }),
+  bulkCreate: publicProcedure
+    .input(z.array(createUrl))
+    .mutation(async ({ ctx, input }) => {
+      const urls = input.map((url) => ({
+        slug:
+          url.slug === "" || url.slug === undefined
+            ? slugGenerator()
+            : url.slug,
+        url: fixUrl(url.url),
+        userId: url.userId,
+        localId: url.localId,
+      }));
+
+      const createShortUrls = await ctx.prisma.url.createMany({
+        data: urls,
+        skipDuplicates: true,
+      });
+
+      if (urls[0]?.userId) {
+        await ctx.prisma.user.update({
+          where: { id: urls[0].userId },
+          data: { totalUrls: { increment: urls.length } },
+        });
+      }
+
+      return createShortUrls;
+    }),
   create: publicProcedure.input(createUrl).mutation(async ({ ctx, input }) => {
     const { slug, url, userId, localId } = input;
 
@@ -159,6 +186,13 @@ export const urlRouter = createTRPCRouter({
       },
     });
 
+    if (userId) {
+      await ctx.prisma.user.update({
+        where: { id: userId },
+        data: { totalUrls: { increment: 1 } },
+      });
+    }
+
     return createShortUrl;
   }),
   delete: protectedProcedure
@@ -169,6 +203,27 @@ export const urlRouter = createTRPCRouter({
       await findUrlAndIsOwner(id, userId, ctx.prisma);
 
       await ctx.prisma.url.delete({ where: { id } });
+
+      await ctx.prisma.user.update({
+        where: { id: userId },
+        data: { totalUrls: { decrement: 1 } },
+      });
+
+      return {
+        success: true,
+      };
+    }),
+  bulkDelete: protectedProcedure
+    .input(z.array(deleteUrl))
+    .mutation(async ({ ctx, input }) => {
+      const ids = input.map((url) => url.id);
+
+      await ctx.prisma.url.deleteMany({ where: { id: { in: ids } } });
+
+      await ctx.prisma.user.update({
+        where: { id: input[0]?.userId },
+        data: { totalUrls: { decrement: ids.length } },
+      });
 
       return {
         success: true,

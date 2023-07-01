@@ -60,7 +60,7 @@ const UrlComponent = ({
   );
 };
 
-type UrlsType = RouterOutputs["url"]["getAllByLocalId" | "all"];
+type UrlsType = RouterOutputs["url"]["all"];
 
 export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
   const router = useRouter();
@@ -84,26 +84,28 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
   const firstItem = urls[0] ?? ({} as UrlsType[0]);
   const otherItems = urls.length > 3 ? urls.slice(1, 3) : urls.slice(1);
 
-  const copyToClipBoard = async (url: string, id: string) => {
-    try {
-      setUrlCopied(undefined);
-      await navigator.clipboard.writeText(url);
+  const copyToClipBoard = (url: string, id: string) => {
+    (async () => {
+      try {
+        setUrlCopied(undefined);
+        await navigator.clipboard.writeText(url);
 
-      setUrlCopied(id);
-    } catch (err) {
-      setUrlCopied(undefined);
-    }
+        setUrlCopied(id);
+      } catch (err) {
+        setUrlCopied(undefined);
+      }
+    })();
   };
 
   return (
     <div className="mt-4 w-full rounded-lg bg-white p-[20px]">
       <UrlComponent
-        onCopy={async (): Promise<void> => {
-          await copyToClipBoard(
+        onCopy={() =>
+          copyToClipBoard(
             `${process.env.NEXT_PUBLIC_URL}/${firstItem?.slug}`,
             firstItem?.id ?? "",
-          );
-        }}
+          )
+        }
         copied={urlCopied === firstItem?.id}
         shortURL={`${removeUrlPrefix(`${APP_URL}/${firstItem?.slug}`, false)}`}
         url={firstItem?.url ?? ""}
@@ -115,9 +117,7 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
 
         return (
           <UrlComponent
-            onCopy={async (): Promise<void> => {
-              await copyToClipBoard(`${APP_URL}/${item.slug}`, item.id);
-            }}
+            onCopy={() => copyToClipBoard(`${APP_URL}/${item.slug}`, item.id)}
             copied={urlCopied === item.id}
             key={item.id}
             shortURL={shortURL}

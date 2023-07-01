@@ -244,4 +244,4 @@ export const FOOTER_SOCIALS = [
 ];
 
 //
-export const LOCAL_USER_ID = "localLinkId";
+export const LOCAL_USER_ID_KEY = "LOCAL_USER_ID_KEY";

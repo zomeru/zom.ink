@@ -62,7 +62,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
                 Link Management, Link Analytics
               </h2>
               <p className="text-center sm:text-start">All rights reserved.</p>
-              <div className="flex items-center justify-center space-x-1 sm:justify-start">
+              {/* <div className="flex items-center justify-center space-x-1 sm:justify-start">
                 {FOOTER_SOCIALS.map(({ name, Icon, link }, index) => (
                   <Link
                     key={name}
@@ -78,12 +78,12 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
                     />
                   </Link>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
-      {/* <div className="bg-primary-200 flex h-[40px] w-full items-center justify-center">
+      <div className="bg-primary-200 flex h-[40px] w-full items-center justify-center">
         <p className="text-sm text-white sm:text-base">
           Built by{" "}
           <Link
@@ -93,9 +93,10 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
             className="transition-all duration-200 ease-in-out hover:text-neutral-200"
           >
             Zomer Gregorio
-          </Link>
+          </Link>{" "}
+          @ 2023
         </p>
-      </div> */}
+      </div>
     </footer>
   );
 });

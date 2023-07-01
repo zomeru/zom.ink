@@ -4,25 +4,54 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
+import { NextSeo } from "next-seo";
 
 import { INVALID_URL_ENTERED_ERROR_MESSAGE } from "@zomink/api/src/error";
-import { type Prisma } from "@zomink/db";
 
-import { ssrApi } from "~/utils";
+import { seoConfig, ssrApi } from "~/utils";
 import NotFound from "./404";
 
 type SlugProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
+type UrlMetadata = {
+  title: string;
+  description: string;
+  images: string[];
+  url: string;
+};
+
 const Slug: NextPage<SlugProps> = ({ data }) => {
-  return <NotFound message={data.error?.message} />;
+  return (
+    <>
+      <NextSeo
+        title={data.metadata?.title}
+        description={data.metadata?.description}
+        canonical={data.metadata?.url}
+        openGraph={{
+          type: "website",
+          url: data.metadata?.url,
+          title: data.metadata?.title,
+          description: data.metadata?.description,
+          images: [
+            {
+              url: data.metadata?.images[0] ?? "",
+            },
+          ],
+          siteName: data.metadata?.title,
+        }}
+      />
+      <NotFound message={data.error?.message} />
+    </>
+  );
 };
 
 export default Slug;
 
-type UrlType = Prisma.UrlGetPayload<Record<string, never>>["url"];
-
 export const getServerSideProps: GetServerSideProps<{
-  data: { url: UrlType | null; error?: { message: string } | null };
+  data: {
+    metadata?: UrlMetadata;
+    error?: { message: string };
+  };
 }> = async (ctx) => {
   const { slug } = ctx.params as { slug: string };
   const userAgent = ctx.req.headers["user-agent"];
@@ -44,8 +73,31 @@ export const getServerSideProps: GetServerSideProps<{
       };
     });
 
+  const metadata = await fetch(
+    `https://jsonlink.io/api/extract?url=${
+      data.url ?? process.env.NEXTAUTH_URL
+    }`,
+  )
+    .then(async (res) => (await res.json()) as UrlMetadata)
+    .catch(() => null);
+
+  const seo = seoConfig();
+  const _metadata =
+    metadata ??
+    ({
+      title: seo.title,
+      description: seo.description,
+      images: [seo.openGraph?.images?.[0]?.url],
+      url: seo.openGraph?.url,
+    } as UrlMetadata);
+
   if (data.url) {
     return {
+      props: {
+        data: {
+          metadata: _metadata,
+        },
+      },
       redirect: {
         destination: data.url,
         permanent: true,
@@ -55,7 +107,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   return {
     props: {
-      data,
+      data: {},
     },
   };
 };

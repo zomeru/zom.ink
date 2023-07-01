@@ -38,7 +38,7 @@ export const FAQ = () => {
             <div
               onClick={() => onFAQClick(id)}
               onKeyDown={() => onFAQClick(id)}
-              tabIndex={i}
+              tabIndex={0}
               role="button"
               className={`flex w-full cursor-pointer items-center justify-between border-b border-neutral-300 px-[20px] py-[20px] transition-all duration-300 ease-in-out hover:bg-neutral-300 sm:px-[80px] ${
                 selectedFAQ === id && "bg-neutral-300"

@@ -17,14 +17,7 @@ import { env } from "../env.mjs";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      username?: string;
-      role: Role;
-      totalClicks: number;
-      totalUrls: number;
-      createdAt: Date;
-    } & DefaultSession["user"];
+    user: User & DefaultSession["user"];
   }
 
   interface User {
@@ -56,7 +49,7 @@ export const authOptions: NextAuthOptions = {
         token.createdAt = user.createdAt;
       }
 
-      return Promise.resolve(token);
+      return token;
     },
     session({ session, token }) {
       if (token) {
@@ -69,14 +62,14 @@ export const authOptions: NextAuthOptions = {
         session.user.createdAt = token.createdAt as Date;
       }
 
-      return Promise.resolve(session);
+      return session;
     },
     signIn: async (session) => {
       if (session.user.banned) {
         return Promise.reject(new Error("Your account has been banned."));
       }
 
-      return Promise.resolve(true);
+      return true;
     },
   },
   session: {
@@ -98,7 +91,6 @@ export const authOptions: NextAuthOptions = {
           label: "Email",
           type: "text",
           placeholder: "example@domain.com",
-          value: "",
         },
         password: { label: "Password", type: "password" },
       },
@@ -126,14 +118,14 @@ export const authOptions: NextAuthOptions = {
           return Promise.reject(invalidCredentialsError);
         }
 
-        return Promise.resolve({
+        return {
           id: user.id,
           email: user.email,
           username: user.username,
           totalClicks: user.totalClicks,
           totalUrls: user.totalUrls,
           createdAt: user.createdAt,
-        } as User);
+        } as User;
       },
     }),
   ],
