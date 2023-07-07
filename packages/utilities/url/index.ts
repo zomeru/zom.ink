@@ -58,9 +58,9 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
    * client validation, so we need to check if
    * NEXTAUTH_URL is defined, if not, we use NEXT_PUBLIC_URL
    */
-  const MY_URL = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_URL;
+  const MY_URL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_URL;
 
-  const myHost = removeUrlPrefix(MY_URL || "");
+  const myHost = removeUrlPrefix(MY_URL ?? "");
   const urlHost = removeUrlPrefix(url);
 
   const isDomainCheck = checkDomain ? !BLOCKED_DOMAINS.includes(urlHost) : true;
@@ -76,12 +76,12 @@ export const isValidURL = (url: string, checkDomain = true): boolean => {
 };
 
 /**
- * Check if a slug is alphanumeric
+ * Check if a slug is alphanumeric and only contains hyphens (-)
  *
  * @param slug Slug string to check
  */
 export const isValidSlug = (slug: string): boolean => {
-  const regEx = /^[a-zA-Z0-9]+$/;
+  const regEx = /^[a-zA-Z0-9-]+$/;
   const _slug = slug.trim();
 
   return !_slug.includes(" ") && regEx.test(_slug);

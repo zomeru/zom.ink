@@ -46,7 +46,7 @@ export const MyUrls = ({ isOpen, setOpen }: MyUrlsProps) => {
                 {urls.data?.length ? (
                   <>
                     {urls.data?.map((url) => {
-                      const momentAgo = moment(url.updatedAt).fromNow();
+                      const momentAgo = moment(url.createdAt).fromNow();
                       const shortUrl = `${process.env.NEXT_PUBLIC_URL}/${url.slug}`;
 
                       return (
@@ -57,10 +57,7 @@ export const MyUrls = ({ isOpen, setOpen }: MyUrlsProps) => {
                           <div className="flex flex-col items-start justify-between overflow-hidden">
                             <div className="flex flex-col items-start">
                               <span className="font-medium">
-                                {removeUrlPrefix(
-                                  process.env.NEXT_PUBLIC_URL ?? "",
-                                )}
-                                /{url.slug}
+                                {removeUrlPrefix(shortUrl)}
                               </span>
                               <span className="text-primary-100 w-full truncate text-ellipsis text-sm sm:w-[500px]">
                                 {url.url}

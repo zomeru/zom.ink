@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { UAParser } from "ua-parser-js";
 import { z } from "zod";
 
+import { Prisma } from "@zomink/db";
 import {
   fixUrl,
   isValidSlug,
@@ -10,10 +11,12 @@ import {
 } from "@zomink/utilities";
 
 import {
+  DEFAULT_ERROR_MESSAGE,
   INVALID_DOMAIN_ERROR_MESSAGE,
   INVALID_SLUG_INPUT_ERROR_MESSAGE,
   INVALID_URL_ENTERED_ERROR_MESSAGE,
   INVALID_URL_ERROR_MESSAGE,
+  SLUG_ALREADY_EXISTS_ERROR_MESSAGE,
 } from "../error";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { type GeoInfo } from "../types";
@@ -177,23 +180,39 @@ export const urlRouter = createTRPCRouter({
 
     const _slug = slug === "" || slug === undefined ? slugGenerator() : slug;
 
-    const createShortUrl = await ctx.prisma.url.create({
-      data: {
-        slug: _slug,
-        url: fixUrl(url),
-        userId,
-        localId,
-      },
-    });
+    try {
+      const createShortUrl = await ctx.prisma.url.create({
+        data: {
+          slug: _slug,
+          url: fixUrl(url),
+          userId,
+          localId,
+        },
+      });
 
-    if (userId) {
-      await ctx.prisma.user.update({
-        where: { id: userId },
-        data: { totalUrls: { increment: 1 } },
+      if (userId) {
+        await ctx.prisma.user.update({
+          where: { id: userId },
+          data: { totalUrls: { increment: 1 } },
+        });
+      }
+
+      return createShortUrl;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: SLUG_ALREADY_EXISTS_ERROR_MESSAGE,
+          });
+        }
+      }
+
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: DEFAULT_ERROR_MESSAGE,
       });
     }
-
-    return createShortUrl;
   }),
   delete: protectedProcedure
     .input(deleteUrl)

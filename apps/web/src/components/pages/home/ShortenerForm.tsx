@@ -26,13 +26,13 @@ export const ShortenField = () => {
   const { mutate } = api.url.create.useMutation({
     onSuccess: async () => {
       await ctx.url.all.invalidate();
+      formikRef.current?.resetForm();
 
       urls.refetch();
     },
     onSettled: () => {
       nProgress.done();
       formikRef.current?.setSubmitting(false);
-      formikRef.current?.resetForm();
     },
     onError: (err) => {
       toast.error(err.message);
