@@ -1,23 +1,26 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 import { appRouter, createTRPCContext } from "@zomink/api";
 
 // export API handler
-export default createNextApiHandler({
+const nextApiHandler = createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
 });
 
-// If you need to enable cors, you can do so like this:
-// const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-//   // Enable cors
-//   await cors(req, res);
+// @see https://nextjs.org/docs/api-routes/introduction
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader("Access-Control-Allow-Origin", process.env.NEXTAUTH_URL ?? "");
+  res.setHeader("Access-Control-Request-Method", "*");
+  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+    return res.end();
+  }
 
-//   // Let the tRPC handler do its magic
-//   return createNextApiHandler({
-//     router: appRouter,
-//     createContext,
-//   })(req, res);
-// };
-
-// export default handler;
+  return nextApiHandler(req, res);
+}

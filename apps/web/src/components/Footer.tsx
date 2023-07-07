@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import Link from "next/link";
 
-import { APP_NAME, FOOTER_LINKS, FOOTER_SOCIALS } from "~/constants";
+import { APP_NAME, FOOTER_LINKS } from "~/constants";
 import { smoothScroll } from "~/utils";
 import { Logo } from "./Logo";
 
@@ -62,23 +62,6 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
                 Link Management, Link Analytics
               </h2>
               <p className="text-center sm:text-start">All rights reserved.</p>
-              <div className="flex items-center justify-center space-x-1 sm:justify-start">
-                {FOOTER_SOCIALS.map(({ name, Icon, link }, index) => (
-                  <Link
-                    key={name}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icon
-                      style={{
-                        fontSize: `${index * 4 + 40}px`,
-                      }}
-                      className="text-infoText hover:text-primary-200 transition-all duration-300 ease-in-out"
-                    />
-                  </Link>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -93,7 +76,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>((_, ref) => {
             className="transition-all duration-200 ease-in-out hover:text-neutral-200"
           >
             Zomer Gregorio
-          </Link>
+          </Link>{" "}
+          @ 2023
         </p>
       </div>
     </footer>

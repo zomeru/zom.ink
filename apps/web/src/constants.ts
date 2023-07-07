@@ -1,4 +1,4 @@
-import { AiFillInstagram } from "react-icons/ai";
+import { AiFillGithub, AiFillInstagram, AiOutlineGoogle } from "react-icons/ai";
 import { BiLink } from "react-icons/bi";
 import { BsPeople } from "react-icons/bs";
 import { FaDiscord, FaFacebookSquare } from "react-icons/fa";
@@ -140,7 +140,7 @@ export const FAQs: FAQS[] = [
       {
         text: "Create an account to get started for FREE.",
         coloredText: "Create an account to get started for FREE.",
-        link: "/auth/register",
+        link: "/auth/signup",
       },
     ],
   },
@@ -244,4 +244,9 @@ export const FOOTER_SOCIALS = [
 ];
 
 //
-export const LOCAL_USER_ID = "localLinkId";
+export const LOCAL_USER_ID_KEY = "LOCAL_USER_ID_KEY";
+
+export const OAUTH_PROVIDERS = [
+  { provider: "Google", Icon: AiOutlineGoogle },
+  { provider: "Discord", Icon: AiFillGithub },
+];

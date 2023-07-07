@@ -16,6 +16,7 @@ export const seoConfig = (
   return {
     title,
     description: APP_DESCRIPTION,
+    canonical: url,
     openGraph: {
       type: "website",
       url,
@@ -54,7 +55,8 @@ export const seoConfig = (
     additionalMetaTags: [
       {
         name: "viewport",
-        content: "initial-scale=1, viewport-fit=cover, user-scalable=no",
+        content:
+          "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
       },
     ],
   };

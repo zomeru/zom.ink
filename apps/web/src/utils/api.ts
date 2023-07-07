@@ -11,26 +11,8 @@ const getBaseUrl = () => {
   return `http://localhost:3000`; // dev SSR should use localhost
 };
 
-export const api = createTRPCNext<AppRouter>({
-  config() {
-    return {
-      transformer: superjson,
-      links: [
-        loggerLink({
-          enabled: (opts) =>
-            process.env.NODE_ENV === "development" ||
-            (opts.direction === "down" && opts.result instanceof Error),
-        }),
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
-    };
-  },
-  ssr: false,
-});
-
-export const ssrApi = createTRPCProxyClient<AppRouter>({
+const trpcConfig = {
+  transformer: superjson,
   links: [
     loggerLink({
       enabled: (opts) =>
@@ -41,7 +23,24 @@ export const ssrApi = createTRPCProxyClient<AppRouter>({
       url: `${getBaseUrl()}/api/trpc`,
     }),
   ],
-  transformer: superjson,
+};
+
+export const api = createTRPCNext<AppRouter>({
+  config() {
+    return {
+      ...trpcConfig,
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      },
+    };
+  },
+  ssr: false,
 });
+
+export const ssrApi = createTRPCProxyClient<AppRouter>(trpcConfig);
 
 export { type RouterInputs, type RouterOutputs } from "@zomink/api";

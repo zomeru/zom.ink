@@ -1,62 +1,38 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
-import { type TRPCClientErrorLike } from "@trpc/client";
-import { type UseTRPCQueryResult } from "@trpc/react-query/shared";
-import { type inferRouterOutputs } from "@trpc/server";
 import { Formik, type FormikProps } from "formik";
 import { useSession } from "next-auth/react";
 import nProgress from "nprogress";
 import { toast } from "react-hot-toast";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
-import { type AppRouter } from "@zomink/api";
-import { fixUrl, isValidURL, slugGenerator } from "@zomink/utilities";
+import { fixUrl, isValidURL } from "@zomink/utilities";
 
 import { TextError } from "~/components/TextError";
-import { APP_NAME, LOCAL_USER_ID } from "~/constants";
+import { APP_NAME } from "~/constants";
+import { useUserUrls } from "~/contexts";
 import { createShortURLSchema, type CreateShortURLSchemaType } from "~/schema";
 import { api } from "~/utils";
 import { ShortenedURLs } from "./ShortenedURLs";
-
-type UrlQuery = UseTRPCQueryResult<
-  inferRouterOutputs<AppRouter>["url"]["all"],
-  TRPCClientErrorLike<AppRouter>
->;
 
 export const ShortenField = () => {
   const { data: session } = useSession();
   const ctx = api.useContext();
 
+  const { urls, localUserId } = useUserUrls();
+
   const formikRef = useRef<FormikProps<CreateShortURLSchemaType>>(null);
-
-  const [localId, setLocalId] = useState("");
-
-  useEffect(() => {
-    const local = localStorage.getItem(LOCAL_USER_ID) ?? slugGenerator(10);
-
-    localStorage.setItem(LOCAL_USER_ID, local);
-    setLocalId(local);
-  }, []);
-
-  let urls: UrlQuery;
-
-  if (session?.user) {
-    urls = api.url.all.useQuery(session?.user?.id ?? "");
-  } else {
-    urls = api.url.getAllByLocalId.useQuery(localId);
-  }
 
   const { mutate } = api.url.create.useMutation({
     onSuccess: async () => {
       await ctx.url.all.invalidate();
-      await ctx.url.getAllByLocalId.invalidate();
+      formikRef.current?.resetForm();
 
       urls.refetch();
     },
     onSettled: () => {
       nProgress.done();
       formikRef.current?.setSubmitting(false);
-      formikRef.current?.resetForm();
     },
     onError: (err) => {
       toast.error(err.message);
@@ -79,7 +55,7 @@ export const ShortenField = () => {
       mutate({
         url: newLink,
         slug: values.slug,
-        localId,
+        localId: localUserId,
       });
     }
   };

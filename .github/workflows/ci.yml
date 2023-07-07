@@ -7,12 +7,6 @@ on:
     branches: ["main"]
   merge_group:
 
-# You can leverage Vercel Remote Caching with Turbo to speed up your builds
-# @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
-env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
 jobs:
   build-lint:
     env:
@@ -31,20 +25,11 @@ jobs:
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.16.1
+          cache: "yarn"
 
       - name: Setup yarn
         run: npm install -g yarn
-
-      - name: Get Yarn cache directory
-        id: yarn-cache
-        run: |
-          echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-
-      - name: Setup yarn cache
-        uses: c-hive/gha-yarn-cache@v2
-        with:
-          node-version: 18.16.1
 
       - name: Install deps (with cache)
         run: yarn install

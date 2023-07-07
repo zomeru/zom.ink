@@ -1,13 +1,14 @@
 import React, { useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Formik, type FormikProps } from "formik";
+import { type OAuthProviderType } from "next-auth/providers";
 import { signIn } from "next-auth/react";
+import nProgress from "nprogress";
 import { toast } from "react-hot-toast";
-import { AiFillGithub } from "react-icons/ai";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
-import { APP_NAME } from "~/constants";
+import { APP_NAME, OAUTH_PROVIDERS } from "~/constants";
 import { signInSchema, signUpSchema, type AuthSchemaType } from "~/schema";
 import { api } from "~/utils";
 
@@ -30,6 +31,11 @@ const validationSchema = {
 
 export const AuthForm = ({ type, error }: AuthFormProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const authError = searchParams.get("error")?.includes("OAuthAccountNotLinked")
+    ? "Email is already linked to a different provider."
+    : searchParams.get("error");
 
   const formikRef = useRef<FormikProps<AuthSchemaType>>(null);
 
@@ -51,12 +57,12 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
   };
 
   const { mutate } = api.auth.createUser.useMutation({
-    onSuccess: async () => {
-      await handleSignIn();
+    onSuccess: () => {
+      handleSignIn();
+      formikRef.current?.resetForm();
     },
     onSettled: () => {
       formikRef.current?.setSubmitting(false);
-      formikRef.current?.resetForm();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -66,11 +72,13 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
   const buttonText = type === "signIn" ? "Log in" : "Sign Up";
   const buttonTextReverse = type === "signIn" ? "Sign Up" : "Log in";
 
-  const onSubmit = async (values: AuthValues): Promise<void> => {
+  const onSubmit = (values: AuthValues) => {
+    nProgress.configure({ showSpinner: true });
+    nProgress.start();
     formikRef.current?.setSubmitting(true);
 
     if (type === "signIn") {
-      await handleSignIn();
+      handleSignIn();
     } else {
       mutate({
         email: values.email,
@@ -78,6 +86,22 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
         confirmPassword: values.confirmPassword,
       });
     }
+
+    nProgress.done();
+  };
+
+  const handleProviderSignIn: React.MouseEventHandler<HTMLButtonElement> = (
+    e,
+  ) => {
+    (async () => {
+      const id = e.currentTarget.id;
+      const provider = id.replace("-sign-in", "") as OAuthProviderType;
+
+      await signIn(provider, {
+        callbackUrl: "/",
+        redirect: false,
+      });
+    })();
   };
 
   return (
@@ -115,24 +139,23 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
               >
                 {buttonTextReverse}
               </Link>
-              {" or "}
-              <Link href="#" className="text-primary-200 underline">
-                {buttonTextReverse} with Discord
-              </Link>
             </p>
-            <button
-              type="button"
-              className="btn-primary-lg mx-auto flex items-center justify-center space-x-3"
-              onClick={() =>
-                signIn("discord", {
-                  callbackUrl: "/",
-                  redirect: false,
-                })
-              }
-            >
-              <AiFillGithub className="text-2xl text-white" />
-              <span>{buttonText} with Discord</span>
-            </button>
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0">
+              {OAUTH_PROVIDERS.map(({ provider, Icon }) => (
+                <button
+                  key={provider}
+                  id={`${provider.toLowerCase()}-sign-in`}
+                  type="button"
+                  className="btn-primary-lg mx-auto flex items-center justify-center space-x-3"
+                  onClick={handleProviderSignIn}
+                >
+                  <Icon className="text-2xl text-white" />
+                  <span>
+                    {buttonText} with {provider}
+                  </span>
+                </button>
+              ))}
+            </div>
             <div className="text-separator text-infoText">OR</div>
             <div className="flex flex-col space-y-3">
               <input
@@ -181,10 +204,10 @@ export const AuthForm = ({ type, error }: AuthFormProps) => {
 
             <p
               className={`duration-800 text-red-400 transition-all ease-in-out ${
-                error ? "opacity-1 h-full" : " h-0 opacity-0"
+                error || authError ? "opacity-1 h-full" : " h-0 opacity-0"
               }`}
             >
-              {error}
+              {error ?? authError}
             </p>
 
             <button

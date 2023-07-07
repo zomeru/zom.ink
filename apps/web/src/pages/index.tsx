@@ -1,5 +1,5 @@
 import React from "react";
-import { NextSeo } from "next-seo";
+import { useSession } from "next-auth/react";
 
 import {
   Banner,
@@ -9,12 +9,13 @@ import {
   ShortenField,
 } from "~/components/pages/home";
 import { Layout } from "~/components";
-import { seoConfig } from "~/utils";
 
 const Home = () => {
+  const { data: session } = useSession();
+  console.log("session", session);
+
   return (
     <Layout>
-      <NextSeo {...seoConfig()} />
       <div className="flex h-full w-full flex-col items-center justify-center">
         <Hero />
         <ShortenField />

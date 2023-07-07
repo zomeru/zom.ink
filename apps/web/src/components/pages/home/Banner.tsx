@@ -5,7 +5,7 @@ export const Banner = () => {
   const router = useRouter();
 
   return (
-    <section className="padding-sides bg-primary-200 my-[60px] w-full sm:my-[80px]">
+    <section className="padding-sides bg-primary-200 my-[30px] w-full sm:my-[50px]">
       <div className="max-width space-y-5 py-[40px] sm:py-[50px]">
         <h2 className="sc-heading text-white">
           More than just a free link shortener
