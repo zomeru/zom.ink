@@ -8,16 +8,18 @@ import { APP_URL } from "~/constants";
 
 const UrlComponent = ({
   onCopy,
-  shortURL,
+  slug,
   showSeparator,
   url,
   copied,
+  isDomainOnly = true,
 }: {
   onCopy: () => void;
   url: string;
-  shortURL: string;
+  slug: string;
   showSeparator: boolean;
   copied: boolean;
+  isDomainOnly?: boolean;
 }) => {
   return (
     <div className="space-y-5">
@@ -28,12 +30,12 @@ const UrlComponent = ({
           </p>
           <div className="mr-2 flex flex-col items-start space-x-4 sm:flex-row sm:items-center">
             <Link
-              href={shortURL}
+              href={`/${slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary-200 truncate"
             >
-              {shortURL}
+              {removeUrlPrefix(`${APP_URL}`, isDomainOnly)}/{slug}
             </Link>
             <button
               type="button"
@@ -97,14 +99,15 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
       <UrlComponent
         onCopy={async (): Promise<void> => {
           await copyToClipBoard(
-            `${process.env.NEXT_PUBLIC_URL}/${firstItem?.slug}`,
+            `${APP_URL}/${firstItem?.slug}`,
             firstItem?.id ?? "",
           );
         }}
         copied={urlCopied === firstItem?.id}
-        shortURL={`${removeUrlPrefix(`${APP_URL}/${firstItem?.slug}`, false)}`}
+        slug={firstItem?.slug ?? ""}
         url={firstItem?.url ?? ""}
         showSeparator
+        isDomainOnly={false}
       />
       {otherItems.map((item: UrlsType[0]) => {
         const url = `${APP_URL}/${item.slug}`;
@@ -117,7 +120,7 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
             }}
             copied={urlCopied === item.id}
             key={item.id}
-            shortURL={shortURL}
+            slug={item.slug}
             url={item.url}
             showSeparator
           />

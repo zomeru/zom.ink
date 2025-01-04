@@ -12,7 +12,7 @@
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "yarn with-env prisma generate",
     "db:generate:prod": "prisma generate",
-    "db:push": "yarn with-env prisma db push --skip-generate",
+    "db:push": "yarn with-env prisma db push --skip-generate --accept-data-loss",
     "db:migrate:dev": "yarn with-env prisma migrate dev --create-only --name \"$(date +%s)\"",
     "db:migrate:prod": "yarn with-env prisma migrate deploy --preview-feature",
     "db:studio": "yarn with-env prisma studio --port 5556",
