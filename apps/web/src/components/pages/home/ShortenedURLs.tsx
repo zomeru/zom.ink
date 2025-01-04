@@ -110,9 +110,6 @@ export const ShortenedURLs = ({ urls }: { urls?: UrlsType }) => {
         isDomainOnly={false}
       />
       {otherItems.map((item: UrlsType[0]) => {
-        const url = `${APP_URL}/${item.slug}`;
-        const shortURL = removeUrlPrefix(url, false);
-
         return (
           <UrlComponent
             onCopy={async (): Promise<void> => {
